@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Node
+node_modules/
+dist/
+.DS_Store
+
+# Docker
+.docker/
+
+# Data & AI Models
+data/vector_db_storage/
+*.wav
+*.mp3

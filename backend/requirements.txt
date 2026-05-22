@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlmodel
+psycopg2-binary
+google-generativeai
+faster-whisper
+edge-tts
+python-multipart
+python-dotenv
