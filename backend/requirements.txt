@@ -3,7 +3,8 @@ uvicorn
 sqlmodel
 psycopg2-binary
 google-generativeai
-faster-whisper
+SpeechRecognition    # <--- Thay cho faster-whisper
+pydub                 # Hỗ trợ xử lý định dạng âm thanh (rất cần thiết)
 edge-tts
 python-multipart
 python-dotenv
