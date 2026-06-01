@@ -2,9 +2,11 @@ fastapi
 uvicorn
 sqlmodel
 psycopg2-binary
-google-generativeai
-SpeechRecognition    # <--- Thay cho faster-whisper
-pydub                 # Hỗ trợ xử lý định dạng âm thanh (rất cần thiết)
-edge-tts
-python-multipart
+qdrant-client
+langchain-huggingface
+langchain-qdrant
+sentence-transformers
+openai
 python-dotenv
+python-multipart
+pillow

@@ -1,5 +1,4 @@
 services:
-  # 1. Database - PostgreSQL
   db:
     image: postgres:16-alpine
     container_name: ama_postgres
@@ -15,7 +14,6 @@ services:
     networks:
       - ama-network
 
-  # 2. Vector Database - Qdrant
   qdrant:
     image: qdrant/qdrant:latest
     container_name: ama_qdrant
@@ -27,7 +25,6 @@ services:
     networks:
       - ama-network
 
-  # 3. Backend - FastAPI
   backend:
     build: ./backend
     container_name: ama_backend
@@ -45,7 +42,6 @@ services:
     networks:
       - ama-network
 
-  # 4. Frontend - React
   frontend:
     build: ./frontend
     container_name: ama_frontend
