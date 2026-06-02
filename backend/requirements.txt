@@ -7,3 +7,9 @@ faster-whisper
 edge-tts
 python-multipart
 python-dotenv
+langchain-core
+langchain-huggingface
+langchain-qdrant
+qdrant-client
+SpeechRecognition
+openai
