@@ -10,3 +10,8 @@ openai
 python-dotenv
 python-multipart
 pillow
+thefuzz
+python-Levenshtein
+langchain
+langchain-openai
+python-multipart
