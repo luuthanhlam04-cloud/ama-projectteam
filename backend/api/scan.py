@@ -1,29 +1,43 @@
-from fastapi import APIRouter, UploadFile, File
-import uuid
 import os
+import traceback # Thêm thư viện này
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from services.image_processing import preprocess_for_ocr
 from services.ocr_engine import process_medicine_ocr
 
 router = APIRouter()
-UPLOAD_DIR = "static/user_uploads"
 
 @router.post("/")
 async def scan_medicine(file: UploadFile = File(...)):
-    """Tiếp nhận ảnh và gọi bộ xử lý OCR."""
-    # 1. Lưu file ảnh
-    file_extension = file.filename.split(".")[-1]
-    file_id = f"{uuid.uuid4()}.{file_extension}"
-    file_path = os.path.join(UPLOAD_DIR, file_id)
+    upload_dir = "static/user_uploads"
+    if not os.path.exists(upload_dir):
+        os.makedirs(upload_dir)
+        
+    temp_path = os.path.join(upload_dir, file.filename)
+    processed_path = None
+    
+    try:
+        with open(temp_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+        
+        processed_path = preprocess_for_ocr(temp_path)
+        result = await process_medicine_ocr(processed_path)
+        
+        return {
+            "status": "success",
+            "result": result,
+            "processed_image": f"/{processed_path}"
+        }
 
-    with open(file_path, "wb") as buffer:
-        content = await file.read()
-        buffer.write(content)
+    except Exception as e:
+        # IN LỖI CHI TIẾT RA TERMINAL ĐỂ DEBUG
+        print("--- [CRITICAL ERROR IN SCAN_MEDICINE] ---")
+        traceback.print_exc() 
+        print("-----------------------------------------")
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # 2. Gọi hàm OCR từ services
-    ocr_result = process_medicine_ocr(file_path)
-
-    return {
-        "message": "Xử lý ảnh hoàn tất",
-        "file_id": file_id,
-        "image_url": f"/static/user_uploads/{file_id}",
-        "ocr_data": ocr_result
-    }
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        if processed_path and os.path.exists(processed_path):
+            os.remove(processed_path)
