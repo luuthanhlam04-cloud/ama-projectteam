@@ -6,7 +6,7 @@ from langchain_qdrant import QdrantVectorStore
 
 def main():
     # 1. Đọc dữ liệu JSON
-    file_path = os.path.join(os.path.dirname(__file__), "data/medicine_samples.json")
+    file_path = os.path.join(os.path.dirname(__file__), "config/medicine_samples.json")
     with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 

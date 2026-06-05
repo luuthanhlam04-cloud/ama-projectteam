@@ -12,7 +12,7 @@ class RAGHandler:
         )
         
         self.db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "qdrant_db"))
-        self.json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "medicine_samples.json"))
+        self.json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "config", "medicine_samples.json"))
         
         # Khởi tạo Qdrant client và vector store
         self.client = QdrantClient(path=self.db_path)

@@ -1,15 +1,34 @@
+# Web Framework & Server
 fastapi
 uvicorn
+python-dotenv
+python-multipart
+
+# Database & Vector DB
 sqlmodel
 psycopg2-binary
-google-generativeai
-faster-whisper
-edge-tts
-python-multipart
-python-dotenv
-langchain-core
-langchain-huggingface
-langchain-qdrant
 qdrant-client
-SpeechRecognition
+langchain-qdrant
+
+# AI & LLM Core
 openai
+google-generativeai
+langchain
+langchain-core
+langchain-openai
+langchain-huggingface
+sentence-transformers
+
+# Audio & Speech
+edge-tts
+SpeechRecognition
+
+# OCR & Image Processing (Merged from OCR branch)
+opencv-python-headless
+pillow
+easyocr
+httpx
+
+# Fuzzy Matching (Merged from OCR branch)
+rapidfuzz
+python-Levenshtein

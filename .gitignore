@@ -17,3 +17,7 @@ dist/
 data/vector_db_storage/
 *.wav
 *.mp3
+
+# .gitignore
+backend/static/user_uploads/*
+!backend/static/user_uploads/.gitkeep
