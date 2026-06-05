@@ -1,9 +1,31 @@
+# Web Framework & Server
 fastapi
 uvicorn
+python-dotenv
+python-multipart
+
+# Database & Vector DB
 sqlmodel
 psycopg2-binary
+qdrant-client
+langchain-qdrant
+
+# AI & LLM
+openai
+langchain
+langchain-openai
+langchain-huggingface
+sentence-transformers
+
+# OCR & Image Processing
+opencv-python-headless
+pillow
+easyocr
+httpx
+
+# Fuzzy Matching (Local OCR Layer)
+rapidfuzz
+python-Levenshtein
+
+#Gọi Gemini
 google-generativeai
-faster-whisper
-edge-tts
-python-multipart
-python-dotenv

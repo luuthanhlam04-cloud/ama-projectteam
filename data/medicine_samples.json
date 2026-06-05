@@ -1,0 +1,904 @@
+[
+  {
+    "id": "drug_001",
+    "brand_name": "Panadol Extra",
+    "generic_name": "Paracetamol, Caffeine",
+    "category": "Giảm đau, hạ sốt",
+    "dosage_form": "Viên nén",
+    "strength": "500mg/65mg",
+    "indications": "Điều trị đau đầu, đau răng, đau cơ, và hạ sốt.",
+    "contraindications": "Mẫn cảm với paracetamol, caffeine người suy gan nặng.",
+    "side_effects": "Phát ban, buồn nôn, mất ngủ (do có caffeine).",
+    "usage_instruction": "Uống 1-2 viên mỗi 4-6 giờ. Không quá 8 viên/ngày.",
+    "storage": "Nơi khô ráo, dưới 30°C.",
+    "search_keywords": [
+      "Panadol đỏ",
+      "Paracetamol",
+      "Thuốc đau đầu"
+    ],
+    "image_url": "/images/drug_001.png"
+  },
+  {
+    "id": "drug_002",
+    "brand_name": "Hapacol 650",
+    "generic_name": "Paracetamol",
+    "category": "Giảm đau, hạ sốt",
+    "dosage_form": "Viên nén",
+    "strength": "650mg",
+    "indications": "Giảm đau nhẹ đến vừa và hạ sốt.",
+    "contraindications": "Mẫn cảm với paracetamol, bệnh gan nặng.",
+    "side_effects": "Phát ban, buồn nôn, dị ứng.",
+    "usage_instruction": "Uống 1 viên mỗi 4-6 giờ khi cần. Không quá 6 viên/ngày.",
+    "storage": "Dưới 30°C, tránh ánh sáng.",
+    "search_keywords": [
+      "Hapacol",
+      "Paracetamol 650",
+      "Thuốc sốt"
+    ],
+    "image_url": "/images/drug_002.png"
+  },
+  {
+    "id": "drug_003",
+    "brand_name": "Efferalgan 500mg",
+    "generic_name": "Paracetamol",
+    "category": "Giảm đau, hạ sốt",
+    "dosage_form": "Viên sủi",
+    "strength": "500mg",
+    "indications": "Các triệu chứng đau và/hoặc sốt (đau đầu, đau răng, nhức mỏi cơ).",
+    "contraindications": "Mẫn cảm paracetamol; suy gan nặng thiếu hut G6PD.",
+    "side_effects": "Rối loạn tiêu hóa, phản ứng ứng da.",
+    "usage_instruction": "Hòa tan 1 viên vào 200ml nước. Cách nhau 4-6 giờ.",
+    "storage": "Nơi khô, nhiệt độ dưới 30°C.",
+    "search_keywords": [
+      "Efferalgan sủi",
+      "Hạ sốt sủi"
+    ],
+    "image_url": "/images/drug_003.png"
+  },
+  {
+    "id": "drug_004",
+    "brand_name": "Decolgen Forte",
+    "generic_name": "Paracetamol, Chlorpheniramine, Phenylpropanolamine",
+    "category": "Thuốc trị cảm cúm",
+    "dosage_form": "Viên nén",
+    "strength": "500mg/2mg/25mg",
+    "indications": "Điều trị cảm số mũi, nghẹt mũi, viêm mũi dị ứng, nhức đầu, sốt.",
+    "contraindications": "Suy gan gan thận nặng tăng huyết áp bệnh mạch vành.",
+    "side_effects": "Buồn ngủ, khô miệng, hoa mắt.",
+    "usage_instruction": "Người lớn: 1 viên/lần, 3-4 lần/ngày.",
+    "storage": "Nơi khô thoáng, tránh ánh sáng.",
+    "search_keywords": [
+      "Decolgen đỏ",
+      "Thuốc cảm"
+    ],
+    "image_url": "/images/drug_004.png"
+  },
+  {
+    "id": "drug_005",
+    "brand_name": "Tiffy",
+    "generic_name": "Paracetamol, Chlorpheniramine, Phenylephrine",
+    "category": "Thuốc trị cảm cúm",
+    "dosage_form": "Viên nén",
+    "strength": "500mg/2mg/10mg",
+    "indications": "Giảm các triệu chứng cảm lạnh: số mũi, nghẹt mũi, sốt, đau đầu.",
+    "contraindications": "Suy gan/thận nặng người vận hành máy móc (gây buồn ngủ).",
+    "side_effects": "Buồn ngủ, chóng mặt, khô mũi.",
+    "usage_instruction": "Người lớn: 1-2 viên/lần, 2-3 lần/ngày.",
+    "storage": "Dưới 30°C, nơi khô ráo.",
+    "search_keywords": [
+      "Titty vị",
+      "Cảm cúm tiffy"
+    ],
+    "image_url": "/images/drug_005.png"
+  },
+  {
+    "id": "drug_006",
+    "brand_name": "Amoxicillin 500mg",
+    "generic_name": "Amoxicillin",
+    "category": "Kháng sinh (Beta-lactam)",
+    "dosage_form": "Viên nang",
+    "strength": "500mg",
+    "indications": "Nhiễm khuẩn đường hô hấp trên, đường tiết niệu, da và mô mềm.",
+    "contraindications": "Tiền sử dị ứng với Penicillin hoặc Cephalosporin.",
+    "side_effects": "Ngoại ban, buồn nôn, tiêu chảy.",
+    "usage_instruction": "Uống 1 viên/lần, cách 8-12 giờ. Theo chỉ định bác sĩ.",
+    "storage": "Nơi khô ráo, tránh ánh sáng.",
+    "search_keywords": [
+      "Amox 500",
+      "Kháng sinh viêm hong"
+    ],
+    "image_url": "/images/drug_006.png"
+  },
+  {
+    "id": "drug_007",
+    "brand_name": "Augmentin 1g",
+    "generic_name": "Amoxicillin, Clavulanic acid",
+    "category": "Kháng sinh phối hợp",
+    "dosage_form": "Viên nén bao phim",
+    "strength": "875mg/125mg",
+    "indications": "Nhiễm khuẩn nặng đường hô hấp, tiết niệu, xương khớp.",
+    "contraindications": "Dị ứng nhóm Beta-lactam; tiền sử vàng da liên quan thuốc.",
+    "side_effects": "Tiêu chảy, nấm Candida da niêm mạc.",
+    "usage_instruction": "Người lớn: 1 viên x 2 lần/ngày. Uống vào đầu bữa ăn.",
+    "storage": "Dưới 25°C, nơi khô ráo.",
+    "search_keywords": [
+      "Augmentin 1000mg",
+      "Kháng sinh liều cao"
+    ],
+    "image_url": "/images/drug_007.png"
+  },
+  {
+    "id": "drug_008",
+    "brand_name": "Berberin",
+    "generic_name": "Berberin chloride",
+    "category": "Thuốc tiêu hóa (Thảo dược)",
+    "dosage_form": "Viên nén",
+    "strength": "10mg (tùy loại)",
+    "indications": "Lỵ amip, lỵ trực khuẩn, viêm ruột, tiêu chảy.",
+    "contraindications": "Phụ nữ có thai (gây co bóp tử cung).",
+    "side_effects": "Hiếm gặp; có thể gây táo bón nếu dùng quá liều.",
+    "usage_instruction": "Người lớn: 5-8 viên/lần, 2 lần/ngày.",
+    "storage": "Nơi khô ráo, thoáng mát.",
+    "search_keywords": [
+      "Berberin vàng",
+      "Thuốc đau bụng"
+    ],
+    "image_url": "/images/drug_008.png"
+  },
+  {
+    "id": "drug_009",
+    "brand_name": "Smecta",
+    "generic_name": "Diosmectite",
+    "category": "Thuốc điều trị tiêu chảy",
+    "dosage_form": "Thuốc bột pha hỗn dịch",
+    "strength": "3g/gói",
+    "indications": "Điều trị tiêu chảy cấp và mạn tỉnh giảm đau do bệnh thực quản, dạ dày.",
+    "contraindications": "Mẫn cảm với thành phần; người không dung nap fructose.",
+    "side_effects": "Táo bón (thường giảm khi giảm liều).",
+    "usage_instruction": "Hòa 1 gói với 50ml nước. Trẻ em/Người lớn theo chỉ định.",
+    "storage": "Nhiệt độ dưới 30°C.",
+    "search_keywords": [
+      "Smecta gói",
+      "Cầm tiêu chảy"
+    ],
+    "image_url": "/images/drug_009.png"
+  },
+  {
+    "id": "drug_010",
+    "brand_name": "Alpha Choay",
+    "generic_name": "Alphachymotrypsin",
+    "category": "Thuốc kháng viêm dạng men",
+    "dosage_form": "Viên nén",
+    "strength": "21 microkatals",
+    "indications": "Điều trị phù nề sau chấn thương hoặc sau phẫu thuật.",
+    "contraindications": "Người giảm alpha-1 antitrypsin; rối loạn đông máu.",
+    "side_effects": "Thay đổi sắc tố da, thay đổi cân nặng.",
+    "usage_instruction": "Uống 2 viên x 3-4 lần/ngày hoặc ngậm dưới lưỡi.",
+    "storage": "Dưới 30°C, tránh ẩm.",
+    "search_keywords": [
+      "Alpha choay xanh",
+      "Chống phù nề"
+    ],
+    "image_url": "/images/drug_010.png"
+  },
+  {
+    "id": "drug_011",
+    "brand_name": "Gaviscon Dual Action",
+    "generic_name": "Natri alginate, Natri bicarbonate, Canxi carbonate",
+    "category": "Thuốc kháng acid",
+    "dosage_form": "Hỗn dịch uống",
+    "strength": "500mg/213mg/325mg (mỗi 10ml)",
+    "indications": "Điều trị các triệu chứng trào ngược dạ dày - thực quản, ợ nóng.",
+    "contraindications": "Mẫn cảm thành phần; suy thận nặng (do có canxi).",
+    "side_effects": "Táo bón, đầy hơi.",
+    "usage_instruction": "Người lớn: 10-20ml sau bữa ăn và trước khi đi ngủ.",
+    "storage": "Không để trong tủ lạnh, nhiệt độ dưới 30°C.",
+    "search_keywords": [
+      "Gaviscon hồng",
+      "chua"
+    ],
+    "image_url": "/images/drug_011.png"
+  },
+  {
+    "id": "drug_012",
+    "brand_name": "Maalox",
+    "generic_name": "Nhôm hydroxide, Magie hydroxide",
+    "category": "Thuốc kháng acid (Antacid)",
+    "dosage_form": "Viên nén nhai",
+    "strength": "400mg/400mg",
+    "indications": "Điều trị triệu chứng do tăng acid dạ dày (ợ chua, đau thượng vị).",
+    "contraindications": "Suy thận nặng; giảm phosphat máu.",
+    "side_effects": "Tiêu cháy (do Magie) hoặc táo bón (do Nhôm).",
+    "usage_instruction": "Nhai kỳ 1-2 viên sau bữa ăn hoặc khi đau.",
+    "storage": "Dưới 30°C, nơi khô ráo.",
+    "search_keywords": [
+      "Maalox nhai",
+      "Đau dạ dày"
+    ],
+    "image_url": "/images/drug_012.png"
+  },
+  {
+    "id": "drug_013",
+    "brand_name": "Fugacar",
+    "generic_name": "Mebendazole",
+    "category": "Thuốc tẩy giun",
+    "dosage_form": "Viên nén nhai",
+    "strength": "500mg",
+    "indications": "Điều trị nhiễm giun đũa, giun tóc, giun móc, giun kim.",
+    "contraindications": "Trẻ dưới 1 tuổi; phụ nữ mang thai (3 tháng đầu).",
+    "side_effects": "Đau bụng nhẹ, tiêu chảy thoáng qua.",
+    "usage_instruction": "Nhai hoặc uống 1 viên duy nhất. Nên dùng 6 tháng/lần.",
+    "storage": "Nơi khô thoáng, dưới 30°C.",
+    "search_keywords": [
+      "Tẩy giun Fugacar",
+      "Mebendazole 500"
+    ],
+    "image_url": "/images/drug_013.png"
+  },
+  {
+    "id": "drug_014",
+    "brand_name": "Aspirin 81mg",
+    "generic_name": "Acid Acetylsalicylic",
+    "category": "Thuốc chống kết tập tiểu câu",
+    "dosage_form": "Viên nén bao tan ở ruột",
+    "strength": "81mg",
+    "indications": "Dự phòng thứ phát nhồi máu cơ tìm và đột quỵ.",
+    "contraindications": "Loét dạ dày tiến triển; hen suyễn; suy tim vừa nặng.",
+    "side_effects": "Kéo dài thời gian chảy máu, kích ứng dạ dày.",
+    "usage_instruction": "Uống 1 viên/ngày, cùng lúc với bữa ăn.",
+    "storage": "Nơi khô ráo, tránh ánh sáng trực tiếp.",
+    "search_keywords": [
+      "Aspirin PH8",
+      "Chống đồng máu"
+    ],
+    "image_url": "/images/drug_014.png"
+  },
+  {
+    "id": "drug_015",
+    "brand_name": "Ibuprofen 400mg (Gofen)",
+    "generic_name": "Ibuprofen",
+    "category": "Thuốc kháng viêm không steroid (NSAID)",
+    "dosage_form": "Viên nang mềm",
+    "strength": "400mg",
+    "indications": "Giảm đau đầu, đau răng, đau bụng kinh, viêm khớp.",
+    "contraindications": "Loét dạ dày; tiền sử dị ứng NSAID; suy gan/thận nặng.",
+    "side_effects": "Đau bụng, buồn nôn, loét tiêu hóa.",
+    "usage_instruction": "Uống 1 viên x 1-3 lần/ngày, sau bữa ăn.",
+    "storage": "Dưới 30°C, khô thoáng.",
+    "search_keywords": [
+      "Gofen 400",
+      "Giảm đau bụng kinh"
+    ],
+    "image_url": "/images/drug_015.png"
+  },
+  {
+    "id": "drug_016",
+    "brand_name": "Nexium mups 20mg",
+    "generic_name": "Esomeprazole",
+    "category": "Thuốc ức chế bơm proton (PPI)",
+    "dosage_form": "Viên nén kháng dịch dạ dày",
+    "strength": "20mg",
+    "indications": "Loét dạ dày - tá tràng trào ngược dạ dày thực quản (GERD).",
+    "contraindications": "Mẫn cảm với esomeprazole hoặc các benzimidazole.",
+    "side_effects": "Nhức đầu, đau bụng, khô miệng.",
+    "usage_instruction": "Uống nguyên viên trước ăn sáng 30-60 phút.",
+    "storage": "Dưới 30°C, trong vì góc.",
+    "search_keywords": [
+      "Nexium 20mg",
+      "Thuốc dạ dày Nexium"
+    ],
+    "image_url": "/images/drug_016.png"
+  },
+  {
+    "id": "drug_017",
+    "brand_name": "Zyrtec",
+    "generic_name": "Cetirizine hydrochloride",
+    "category": "Thuốc kháng Histamin H1",
+    "dosage_form": "Viên nén bao phim",
+    "strength": "10mg",
+    "indications": "Điều trị viêm mũi dị ứng, mày đay mạn tính.",
+    "contraindications": "Mẫn cảm thành phần; suy thận nặng (CICr < 10ml/phút).",
+    "side_effects": "Buồn ngủ (nhẹ). khô miệng.",
+    "usage_instruction": "Người lớn: 1 viên/ngày.",
+    "storage": "Nơi khô ráo, dưới 30°C.",
+    "search_keywords": [
+      "Zyrtec 10mg",
+      "Thuốc dị ứng"
+    ],
+    "image_url": "/images/drug_017.png"
+  },
+  {
+    "id": "drug_018",
+    "brand_name": "Ventolin Evohaler",
+    "generic_name": "Salbutamol",
+    "category": "Thuốc giãn phế quản",
+    "dosage_form": "Bình xịt định liều",
+    "strength": "100mcg/liều",
+    "indications": "Cắt cơn hen suyễn, co thắt phế quản.",
+    "contraindications": "Mẫn cảm thành phần; không dùng để dọa sẩy thai.",
+    "side_effects": "Run tay, nhịp tim nhanh, hạ kali máu.",
+    "usage_instruction": "Xịt 1-2 liều khi có cơn khó thở. Không quá 8 lần/ngày.",
+    "storage": "Dưới 30°C, không đâm thủng bình.",
+    "search_keywords": [
+      "Xịt hen Ventolin",
+      "Salbutamol xit"
+    ],
+    "image_url": "/images/drug_018.png"
+  },
+  {
+    "id": "drug_019",
+    "brand_name": "Mobic 7.5mg",
+    "generic_name": "Meloxicam",
+    "category": "Thuốc NSAID",
+    "dosage_form": "Viên nén",
+    "strength": "7.5mg",
+    "indications": "Viêm khớp dạng thấp, viêm xương khớp cấp tỉnh.",
+    "contraindications": "Suy tim nặng; loét dạ dày suy gan thận nặng.",
+    "side_effects": "Phù, tăng huyết áp, rối loạn tiêu hóa.",
+    "usage_instruction": "Uống 1 viên/ngày. Sau khi ăn.",
+    "storage": "Tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Mobic 7.5",
+      "Giảm đau xương khớp"
+    ],
+    "image_url": "/images/drug_019.png"
+  },
+  {
+    "id": "drug_020",
+    "brand_name": "Amlor 5mg",
+    "generic_name": "Amlodipine",
+    "category": "Thuốc chẹn kênh Canxi",
+    "dosage_form": "Viên nang",
+    "strength": "5mg",
+    "indications": "Điều trị tăng huyết áp, đau thắt ngực ổn định mạn tính.",
+    "contraindications": "Hạ huyết áp nặng; sốc tim, hẹp van động mạch chủ.",
+    "side_effects": "Phủ chân, đánh trống ngực, đỏ bừng mặt.",
+    "usage_instruction": "Uống 1 viên/ngày, cố định một thời điểm.",
+    "storage": "Nơi khô ráo, dưới 30°C.",
+    "search_keywords": [
+      "Amlor 5mg",
+      "Hạ huyết áp Amlor"
+    ],
+    "image_url": "/images/drug_020.png"
+  },
+  {
+    "id": "drug_021",
+    "brand_name": "Glucophage 500mg",
+    "generic_name": "Metformin hydrochloride",
+    "category": "Thuốc hạ đường huyết",
+    "dosage_form": "Viên nén",
+    "strength": "500mg",
+    "indications": "Điều trị đái tháo đường tuýp 2.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhãn sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Glucophage 500mg",
+      "Metformin hydrochloride"
+    ],
+    "image_url": "/images/drug_021.png"
+  },
+  {
+    "id": "drug_022",
+    "brand_name": "Lipitor 10mg",
+    "generic_name": "Atorvastatin",
+    "category": "Thuốc hạ Lipid máu",
+    "dosage_form": "Viên nén bao phim",
+    "strength": "10mg",
+    "indications": "Hạ mỡ máu, giảm cholesterol.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ảnh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Lipitor 10mg",
+      "Atorvastatin"
+    ],
+    "image_url": "/images/drug_022.png"
+  },
+  {
+    "id": "drug_023",
+    "brand_name": "Clarityne",
+    "generic_name": "Loratadine",
+    "category": "Thuốc kháng Histamin",
+    "dosage_form": "Viên nén",
+    "strength": "10mg",
+    "indications": "Viêm mũi dị ứng, mày đay.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Clarityne",
+      "Loratadine"
+    ],
+    "image_url": "/images/drug_023.png"
+  },
+  {
+    "id": "drug_024",
+    "brand_name": "Telfast 120mg",
+    "generic_name": "Fexofenadine",
+    "category": "Thuốc kháng Histamin",
+    "dosage_form": "Viên nén",
+    "strength": "120mg",
+    "indications": "Viêm mũi dị ứng cơ địa.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Telfast 120mg",
+      "Fexofenadine"
+    ],
+    "image_url": "/images/drug_024.png"
+  },
+  {
+    "id": "drug_025",
+    "brand_name": "Motilium",
+    "generic_name": "Domperidone",
+    "category": "Thuốc điều hòa vận động tiêu hóa",
+    "dosage_form": "Hỗn dịch uống (siro)",
+    "strength": "10mg",
+    "indications": "Điều trị triệu chứng nôn và buồn nôn.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Motilium",
+      "Domperidone"
+    ],
+    "image_url": "/images/drug_025.png"
+  },
+  {
+    "id": "drug_026",
+    "brand_name": "Salonpas Patch",
+    "generic_name": "Methyl salicylate, Menthol, Vitamin E",
+    "category": "Giảm đau tại chỗ",
+    "dosage_form": "Miếng dán",
+    "strength": "N/A",
+    "indications": "Giảm đau mỏi cơ, bong gân.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Salonpas Patch",
+      "Methyl salicylate, Menthol, Vitamin E"
+    ],
+    "image_url": "/images/drug_026.png"
+  },
+  {
+    "id": "drug_027",
+    "brand_name": "Alpha-Amylase (Enervon)",
+    "generic_name": "Multivitamins",
+    "category": "Thực phẩm chức năng/ Vitamin",
+    "dosage_form": "Viên bao phim",
+    "strength": "N/A",
+    "indications": "Bổ sung vitamin, nâng cao sức đề kháng.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Alpha-Amylase (Enervon)",
+      "Multivitamins"
+    ],
+    "image_url": "/images/drug_027.png"
+  },
+  {
+    "id": "drug_028",
+    "brand_name": "Oresol (Gói)",
+    "generic_name": "Natri clorid, Kali clorid, Natri citrat, Glucose",
+    "category": "Dịch bù nước",
+    "dosage_form": "Bột pha",
+    "strength": "Gói chuẩn",
+    "indications": "Bù nước và điện giải do tiêu chảy, sốt cao.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Oresol (Gói)",
+      "Natri clorid, Kali clorid, Natri citrat, Glucose"
+    ],
+    "image_url": "/images/drug_028.png"
+  },
+  {
+    "id": "drug_029",
+    "brand_name": "Voltaren Gel",
+    "generic_name": "Diclofenac diethylamine",
+    "category": "NSAID dùng ngoài",
+    "dosage_form": "Gel bôi da",
+    "strength": "1.16%",
+    "indications": "Giảm đau, kháng viêm tại chỗ.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rồi loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Voltaren Gel",
+      "Diclofenac diethylamine"
+    ],
+    "image_url": "/images/drug_029.png"
+  },
+  {
+    "id": "drug_030",
+    "brand_name": "Strepsils Cool",
+    "generic_name": "2,4-Dichlorobenzyl Alcohol, Amylmetacresol",
+    "category": "Sát trùng đường họng",
+    "dosage_form": "Viên ngậm",
+    "strength": "N/A",
+    "indications": "Làm dịu cơn đau họng, sát trùng họng.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhãn sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Strepsils Cool",
+      "2,4-Dichlorobenzyl Alcohol, Amylmetacresol"
+    ],
+    "image_url": "/images/drug_030.png"
+  },
+  {
+    "id": "drug_031",
+    "brand_name": "Eugica (Vàng)",
+    "generic_name": "Eucalyptol, Menthol, Tinh dầu Gừng. Tinh dầu Tần",
+    "category": "Thuốc ho thảo dược",
+    "dosage_form": "Viên nang mềm",
+    "strength": "N/A",
+    "indications": "Giảm ho, đau họng, số mũi.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Eugica (Vàng)",
+      "Eucalyptol, Menthol, Tinh dầu Gừng, Tinh dầu Tần"
+    ],
+    "image_url": "/images/drug_031.png"
+  },
+  {
+    "id": "drug_032",
+    "brand_name": "Prospan",
+    "generic_name": "Cao khô lá thường xuân",
+    "category": "Thuốc ho thảo dược",
+    "dosage_form": "Siro",
+    "strength": "7mg/ml",
+    "indications": "Viêm đường hô hấp cấp có kèm theo ho.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Prospan",
+      "Cao khô lá thường xuân"
+    ],
+    "image_url": "/images/drug_032.png"
+  },
+  {
+    "id": "drug_033",
+    "brand_name": "Acemuc 200mg",
+    "generic_name": "Acetylcysteine",
+    "category": "Thuốc tiêu nhầy",
+    "dosage_form": "Thuốc cóm",
+    "strength": "200mg",
+    "indications": "Làm loãng đờm trong bệnh phế quản - phối.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Acemuc 200mg",
+      "Acetylcysteine"
+    ],
+    "image_url": "/images/drug_033.png"
+  },
+  {
+    "id": "drug_034",
+    "brand_name": "Bisolvon 8mg",
+    "generic_name": "Bromhexine hydrochloride",
+    "category": "Thuốc tiêu nhầy",
+    "dosage_form": "Viên nén",
+    "strength": "8mg",
+    "indications": "Tiêu nhầy đường hô hấp.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rồi loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Bisolvon 8mg",
+      "Bromhexine hydrochloride"
+    ],
+    "image_url": "/images/drug_034.png"
+  },
+  {
+    "id": "drug_035",
+    "brand_name": "Boganic",
+    "generic_name": "Cao Atisô, Cao Rau đắng đất, Cao Bìm bìm",
+    "category": "Thuốc bổ gan thảo dược",
+    "dosage_form": "Viên nang mềm",
+    "strength": "N/A",
+    "indications": "Bổ gan, nhuận tràng, thông mật.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhãn sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Boganic",
+      "Cao Atisô, Cao Rau đắng đất, Cao Bìm bìm"
+    ],
+    "image_url": "/images/drug_035.png"
+  },
+  {
+    "id": "drug_036",
+    "brand_name": "Prednisolone 5mg",
+    "generic_name": "Prednisolone",
+    "category": "Corticosteroid",
+    "dosage_form": "Viên nén",
+    "strength": "5mg",
+    "indications": "Chống viêm và ức chế miễn dịch.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Prednisolone 5mg",
+      "Prednisolone"
+    ],
+    "image_url": "/images/drug_036.png"
+  },
+  {
+    "id": "drug_037",
+    "brand_name": "Dexamethasone 0.5mg",
+    "generic_name": "Dexamethasone",
+    "category": "Corticosteroid",
+    "dosage_form": "Viên nén",
+    "strength": "0.5mg",
+    "indications": "Chống viêm, chống dị ứng.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Dexamethasone 0.5mg.",
+      "Dexamethasone"
+    ],
+    "image_url": "/images/drug_037.png"
+  },
+  {
+    "id": "drug_038",
+    "brand_name": "Ciprofloxacin 500mg",
+    "generic_name": "Ciprofloxacin",
+    "category": "Kháng sinh Quinolone",
+    "dosage_form": "Viên nén",
+    "strength": "500mg",
+    "indications": "Nhiễm khuẩn tiết niệu, sinh dục.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Ciprofloxacin 500mg",
+      "Ciprofloxacin"
+    ],
+    "image_url": "/images/drug_038.png"
+  },
+  {
+    "id": "drug_039",
+    "brand_name": "Zithromax 500mg",
+    "generic_name": "Azithromycin",
+    "category": "Kháng sinh Macrolide",
+    "dosage_form": "Viên nén",
+    "strength": "500mg",
+    "indications": "Nhiễm khuẩn hô hấp, da.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Zithromax 500mg",
+      "Azithromycin"
+    ],
+    "image_url": "/images/drug_039.png"
+  },
+  {
+    "id": "drug_040",
+    "brand_name": "Flagyl 250mg",
+    "generic_name": "Metronidazole",
+    "category": "Thuốc kháng khuẩn, kháng đơn bào",
+    "dosage_form": "Viên nén",
+    "strength": "250mg",
+    "indications": "Nhiễm khuẩn kỵ khí, nhiễm amip.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhãn sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Flagyl 250mg",
+      "Metronidazole"
+    ],
+    "image_url": "/images/drug_040.png"
+  },
+  {
+    "id": "drug_041",
+    "brand_name": "Crestor 10mg",
+    "generic_name": "Rosuvastatin calcium",
+    "category": "Statin",
+    "dosage_form": "Viên nén",
+    "strength": "10mg",
+    "indications": "Tăng cholesterol máu.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Crestor 10mg.",
+      "Rosuvastatin calcium"
+    ],
+    "image_url": "/images/drug_041.png"
+  },
+  {
+    "id": "drug_042",
+    "brand_name": "Cozaar 50mg",
+    "generic_name": "Losartan potassium",
+    "category": "Thuốc chẹn thụ thể Angiotensin II",
+    "dosage_form": "Viên nén",
+    "strength": "50mg",
+    "indications": "Điều trị tăng huyết áp.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Cozaar 50mg",
+      "Losartan potassium"
+    ],
+    "image_url": "/images/drug_042.png"
+  },
+  {
+    "id": "drug_043",
+    "brand_name": "Enalapril 5mg",
+    "generic_name": "Enalapril maleate",
+    "category": "Thuốc ức chế men chuyến (ACE)",
+    "dosage_form": "Viên nén",
+    "strength": "5mg",
+    "indications": "Tăng huyết áp, suy tim.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Enalapril 5mg",
+      "Enalapril maleate"
+    ],
+    "image_url": "/images/drug_043.png"
+  },
+  {
+    "id": "drug_044",
+    "brand_name": "Pantoprazole 40mg",
+    "generic_name": "Pantoprazole",
+    "category": "PPI",
+    "dosage_form": "Viên nén bao tan",
+    "strength": "40mg",
+    "indications": "Viêm loét dạ dày, trào ngược.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Pantoprazole 40mg",
+      "Pantoprazole"
+    ],
+    "image_url": "/images/drug_044.png"
+  },
+  {
+    "id": "drug_045",
+    "brand_name": "Bisalaxyl 5mg",
+    "generic_name": "Bisacodyl",
+    "category": "Thuốc nhuận tràng",
+    "dosage_form": "Viên bao phim",
+    "strength": "5mg",
+    "indications": "Điều trị táo bón.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Bisalaxyl 5mg",
+      "Bisacodyl"
+    ],
+    "image_url": "/images/drug_045.png"
+  },
+  {
+    "id": "drug_046",
+    "brand_name": "Vitamin C 500mg",
+    "generic_name": "Acid Ascorbic",
+    "category": "Vitamin",
+    "dosage_form": "Viên nén",
+    "strength": "500mg",
+    "indications": "Điều trị thiếu vitamin C (Scurvy).",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhãn sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Vitamin C 500mg",
+      "Acid Ascorbic"
+    ],
+    "image_url": "/images/drug_046.png"
+  },
+  {
+    "id": "drug_047",
+    "brand_name": "Celebrex 200mg",
+    "generic_name": "Celecoxib",
+    "category": "NSAID (Ức chế COX-2)",
+    "dosage_form": "Viên nang",
+    "strength": "200mg",
+    "indications": "Viêm khớp dạng thấp, thoái hóa khớp.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Celebrex 200mg",
+      "Celecoxib"
+    ],
+    "image_url": "/images/drug_047.png"
+  },
+  {
+    "id": "drug_048",
+    "brand_name": "Cataflam 25mg",
+    "generic_name": "Diclofenac potassium",
+    "category": "NSAID",
+    "dosage_form": "Viên nén bao đường",
+    "strength": "25mg",
+    "indications": "Giảm đau nhanh (đau bụng kinh, đau răng).",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Cataflam 25mg",
+      "Diclofenac potassium"
+    ],
+    "image_url": "/images/drug_048.png"
+  },
+  {
+    "id": "drug_049",
+    "brand_name": "Deep Heat Rub",
+    "generic_name": "Methyl Salicylate, Menthol",
+    "category": "Giảm đau tại chỗ",
+    "dosage_form": "Kem bôi",
+    "strength": "N/A",
+    "indications": "Giảm đau cơ, đau lưng.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ánh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Deep Heat Rub",
+      "Methyl Salicylate, Menthol"
+    ],
+    "image_url": "/images/drug_049.png"
+  },
+  {
+    "id": "drug_050",
+    "brand_name": "Medrol 4mg",
+    "generic_name": "Methylprednisolone",
+    "category": "Corticosteroid",
+    "dosage_form": "Viên nén",
+    "strength": "4mg",
+    "indications": "Rối loạn nội tiết, dị ứng, viêm.",
+    "contraindications": "Mẫn cảm với thành phần của thuốc.",
+    "side_effects": "Rối loạn tiêu hóa nhẹ, dị ứng da.",
+    "usage_instruction": "Theo hướng dẫn của bác sĩ hoặc nhân sản phẩm.",
+    "storage": "Nơi khô ráo, tránh ảnh sáng, dưới 30°C.",
+    "search_keywords": [
+      "Medrol 4mg",
+      "Methylprednisolone"
+    ],
+    "image_url": "/images/drug_050.png"
+  }
+]
