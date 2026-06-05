@@ -26,3 +26,6 @@ httpx
 # Fuzzy Matching (Local OCR Layer)
 rapidfuzz
 python-Levenshtein
+
+#Gọi Gemini
+google-generativeai
