@@ -72,30 +72,39 @@ async def process_medicine_ocr(image_path: str):
             highest_score = 0
             
             for med in db_medicines:
+                # Ưu tiên 1: So khớp trực tiếp tên thuốc (Brand name)
                 m_name = med.name.lower()
-                score = fuzz.partial_ratio(detected_text, m_name)
                 
+                # Dùng token_set_ratio sẽ tốt hơn cho các chuỗi OCR lộn xộn
+                name_score = fuzz.token_set_ratio(m_name, detected_text)
+                
+                # Ưu tiên 2: So khớp với các keyword phụ
+                keyword_score = 0
                 if getattr(med, "search_keywords", None):
                     for kw in med.search_keywords:
-                        kw_score = fuzz.partial_ratio(detected_text, kw.lower())
-                        score = max(score, kw_score)
+                        kw_lower = kw.lower()
+                        # Dùng partial_ratio cho keyword nhưng phạt nhẹ nếu keyword quá ngắn
+                        kw_match = fuzz.partial_ratio(kw_lower, detected_text)
+                        if kw_match > keyword_score:
+                            keyword_score = kw_match
 
-                if score > highest_score:
-                    highest_score = score
+                # Tính điểm tổng hợp: Tên thuốc có giá trị quyết định hơn keyword phụ
+                # Nếu name_score cao, lấy name_score. Nếu keyword cao, lấy keyword nhưng giảm trọng số đi một chút (vd: 0.9)
+                # Để tránh việc keyword "cướp" mất kết quả của brand_name
+                final_score = max(name_score, keyword_score * 0.95)
+
+                # Dùng >= thay vì > để nếu có đồng điểm, thuật toán có thể 
+                # bổ sung thêm logic "Tie-breaker" (bầu chọn) ở đây nếu cần
+                if final_score > highest_score:
+                    highest_score = final_score
                     best_match = med
 
-            if highest_score > 85 and best_match:
+            # Nâng ngưỡng tin cậy lên 85 (có thể tinh chỉnh thành 88-90 tùy thực tế)
+            if highest_score >= 85 and best_match:
                 return {
                     "id": best_match.id,
                     "name": best_match.name,
                     "confidence": round(highest_score, 2),
-                    "method": "local_fuzzy",
+                    "method": "local_fuzzy_optimized",
                     "image_url": getattr(best_match, "image_url", f"/static/medicine_assets/{best_match.id}.png")
                 }
-
-    cloud_name = await call_openrouter_vision(image_path)
-    return {
-        "name": cloud_name,
-        "confidence": 100,
-        "method": "cloud"
-    }

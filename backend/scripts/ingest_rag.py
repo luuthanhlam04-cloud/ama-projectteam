@@ -14,7 +14,7 @@ sys.path.insert(0, BASE_DIR)
 def run_ingest():
     data_path = "/app/data/medicine_samples.json"
     collection_name = "medicine_knowledge"
-    model_name = os.getenv("EMBEDDING_MODEL_NAME", "sentence-transformers/all-MiniLM-L6-v2")
+    model_name = os.getenv("EMBEDDING_MODEL_NAME", "paraphrase-multilingual-MiniLM-L12-v2")
     qdrant_url = "http://qdrant:6333"
 
     if not os.path.exists(data_path):
