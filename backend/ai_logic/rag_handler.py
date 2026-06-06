@@ -3,6 +3,9 @@ import json
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class RAGHandler:
     def __init__(self):
@@ -11,16 +14,11 @@ class RAGHandler:
             model_name="paraphrase-multilingual-MiniLM-L12-v2"  # sửa từ all-MiniLM-L6-v2
         )
         
-        self.db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "qdrant_db"))
         self.json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "config", "medicine_samples.json"))
         
-        # Khởi tạo Qdrant client và vector store
-        self.client = QdrantClient(path=self.db_path)
-        self.vector_store = QdrantVectorStore(
-            client=self.client,
-            collection_name="medical_knowledge",
-            embedding=self.embeddings
-        )
+        # Lazy init: Qdrant client chưa được tạo, sẽ kết nối khi lần đầu query
+        self._client = None
+        self._vector_store = None
         
         # Load toàn bộ dữ liệu JSON một lần
         self.all_drugs = []
@@ -42,6 +40,25 @@ class RAGHandler:
             "huyết áp": ["tăng huyết áp", "cao huyết áp"],
             "táo bón": ["táo bón", "khó đi ngoài"],
         }
+
+    @property
+    def vector_store(self):
+        """Lazy khởi tạo Qdrant vector store khi lần đầu truy cập"""
+        if self._vector_store is None:
+            qdrant_url = os.getenv("QDRANT_URL")
+            qdrant_api_key = os.getenv("QDRANT_API_KEY")
+            if not qdrant_url or qdrant_url == "https://your-cluster-url.qdrant.io":
+                raise ValueError(
+                    "QDRANT_URL chưa được cấu hình. "
+                    "Vui lòng cập nhật QDRANT_URL và QDRANT_API_KEY trong file .env"
+                )
+            self._client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+            self._vector_store = QdrantVectorStore(
+                client=self._client,
+                collection_name="medical_knowledge",
+                embedding=self.embeddings
+            )
+        return self._vector_store
 
     def _match_keyword(self, text: str, keywords: list) -> bool:
         """Kiểm tra text có chứa bất kỳ keyword nào không (không phân biệt hoa thường)"""

@@ -9,7 +9,7 @@ router = APIRouter()
 class ChatRequest(BaseModel):
     text: str | None = None
 
-@router.post("/chat")
+@router.post("")
 async def chat_endpoint(user_input: ChatRequest):
     try:
         query_text = user_input.text

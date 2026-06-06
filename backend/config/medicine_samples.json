@@ -16,7 +16,7 @@
       "Paracetamol",
       "Thuốc đau đầu"
     ],
-    "image_url": "/images/drug_001.png"
+    "image_url": "/static/medicine_assets/drug_001.png"
   },
   {
     "id": "drug_002",
@@ -35,7 +35,7 @@
       "Paracetamol 650",
       "Thuốc sốt"
     ],
-    "image_url": "/images/drug_002.png"
+    "image_url": "/static/medicine_assets/drug_002.png"
   },
   {
     "id": "drug_003",
@@ -53,7 +53,7 @@
       "Efferalgan sủi",
       "Hạ sốt sủi"
     ],
-    "image_url": "/images/drug_003.png"
+    "image_url": "/static/medicine_assets/drug_003.png"
   },
   {
     "id": "drug_004",
@@ -71,7 +71,7 @@
       "Decolgen đỏ",
       "Thuốc cảm"
     ],
-    "image_url": "/images/drug_004.png"
+    "image_url": "/static/medicine_assets/drug_004.png"
   },
   {
     "id": "drug_005",
@@ -89,7 +89,7 @@
       "Titty vị",
       "Cảm cúm tiffy"
     ],
-    "image_url": "/images/drug_005.png"
+    "image_url": "/static/medicine_assets/drug_005.png"
   },
   {
     "id": "drug_006",
@@ -107,7 +107,7 @@
       "Amox 500",
       "Kháng sinh viêm hong"
     ],
-    "image_url": "/images/drug_006.png"
+    "image_url": "/static/medicine_assets/drug_006.png"
   },
   {
     "id": "drug_007",
@@ -125,7 +125,7 @@
       "Augmentin 1000mg",
       "Kháng sinh liều cao"
     ],
-    "image_url": "/images/drug_007.png"
+    "image_url": "/static/medicine_assets/drug_007.png"
   },
   {
     "id": "drug_008",
@@ -143,7 +143,7 @@
       "Berberin vàng",
       "Thuốc đau bụng"
     ],
-    "image_url": "/images/drug_008.png"
+    "image_url": "/static/medicine_assets/drug_008.png"
   },
   {
     "id": "drug_009",
@@ -161,7 +161,7 @@
       "Smecta gói",
       "Cầm tiêu chảy"
     ],
-    "image_url": "/images/drug_009.png"
+    "image_url": "/static/medicine_assets/drug_009.png"
   },
   {
     "id": "drug_010",
@@ -179,7 +179,7 @@
       "Alpha choay xanh",
       "Chống phù nề"
     ],
-    "image_url": "/images/drug_010.png"
+    "image_url": "/static/medicine_assets/drug_010.png"
   },
   {
     "id": "drug_011",
@@ -197,7 +197,7 @@
       "Gaviscon hồng",
       "chua"
     ],
-    "image_url": "/images/drug_011.png"
+    "image_url": "/static/medicine_assets/drug_011.png"
   },
   {
     "id": "drug_012",
@@ -215,7 +215,7 @@
       "Maalox nhai",
       "Đau dạ dày"
     ],
-    "image_url": "/images/drug_012.png"
+    "image_url": "/static/medicine_assets/drug_012.png"
   },
   {
     "id": "drug_013",
@@ -233,7 +233,7 @@
       "Tẩy giun Fugacar",
       "Mebendazole 500"
     ],
-    "image_url": "/images/drug_013.png"
+    "image_url": "/static/medicine_assets/drug_013.png"
   },
   {
     "id": "drug_014",
@@ -251,7 +251,7 @@
       "Aspirin PH8",
       "Chống đồng máu"
     ],
-    "image_url": "/images/drug_014.png"
+    "image_url": "/static/medicine_assets/drug_014.png"
   },
   {
     "id": "drug_015",
@@ -269,7 +269,7 @@
       "Gofen 400",
       "Giảm đau bụng kinh"
     ],
-    "image_url": "/images/drug_015.png"
+    "image_url": "/static/medicine_assets/drug_015.png"
   },
   {
     "id": "drug_016",
@@ -287,7 +287,7 @@
       "Nexium 20mg",
       "Thuốc dạ dày Nexium"
     ],
-    "image_url": "/images/drug_016.png"
+    "image_url": "/static/medicine_assets/drug_016.png"
   },
   {
     "id": "drug_017",
@@ -305,7 +305,7 @@
       "Zyrtec 10mg",
       "Thuốc dị ứng"
     ],
-    "image_url": "/images/drug_017.png"
+    "image_url": "/static/medicine_assets/drug_017.png"
   },
   {
     "id": "drug_018",
@@ -323,7 +323,7 @@
       "Xịt hen Ventolin",
       "Salbutamol xit"
     ],
-    "image_url": "/images/drug_018.png"
+    "image_url": "/static/medicine_assets/drug_018.png"
   },
   {
     "id": "drug_019",
@@ -341,7 +341,7 @@
       "Mobic 7.5",
       "Giảm đau xương khớp"
     ],
-    "image_url": "/images/drug_019.png"
+    "image_url": "/static/medicine_assets/drug_019.png"
   },
   {
     "id": "drug_020",
@@ -359,7 +359,7 @@
       "Amlor 5mg",
       "Hạ huyết áp Amlor"
     ],
-    "image_url": "/images/drug_020.png"
+    "image_url": "/static/medicine_assets/drug_020.png"
   },
   {
     "id": "drug_021",
@@ -377,7 +377,7 @@
       "Glucophage 500mg",
       "Metformin hydrochloride"
     ],
-    "image_url": "/images/drug_021.png"
+    "image_url": "/static/medicine_assets/drug_021.png"
   },
   {
     "id": "drug_022",
@@ -395,7 +395,7 @@
       "Lipitor 10mg",
       "Atorvastatin"
     ],
-    "image_url": "/images/drug_022.png"
+    "image_url": "/static/medicine_assets/drug_022.png"
   },
   {
     "id": "drug_023",
@@ -413,7 +413,7 @@
       "Clarityne",
       "Loratadine"
     ],
-    "image_url": "/images/drug_023.png"
+    "image_url": "/static/medicine_assets/drug_023.png"
   },
   {
     "id": "drug_024",
@@ -431,7 +431,7 @@
       "Telfast 120mg",
       "Fexofenadine"
     ],
-    "image_url": "/images/drug_024.png"
+    "image_url": "/static/medicine_assets/drug_024.png"
   },
   {
     "id": "drug_025",
@@ -449,7 +449,7 @@
       "Motilium",
       "Domperidone"
     ],
-    "image_url": "/images/drug_025.png"
+    "image_url": "/static/medicine_assets/drug_025.png"
   },
   {
     "id": "drug_026",
@@ -467,7 +467,7 @@
       "Salonpas Patch",
       "Methyl salicylate, Menthol, Vitamin E"
     ],
-    "image_url": "/images/drug_026.png"
+    "image_url": "/static/medicine_assets/drug_026.png"
   },
   {
     "id": "drug_027",
@@ -485,7 +485,7 @@
       "Alpha-Amylase (Enervon)",
       "Multivitamins"
     ],
-    "image_url": "/images/drug_027.png"
+    "image_url": "/static/medicine_assets/drug_027.png"
   },
   {
     "id": "drug_028",
@@ -503,7 +503,7 @@
       "Oresol (Gói)",
       "Natri clorid, Kali clorid, Natri citrat, Glucose"
     ],
-    "image_url": "/images/drug_028.png"
+    "image_url": "/static/medicine_assets/drug_028.png"
   },
   {
     "id": "drug_029",
@@ -521,7 +521,7 @@
       "Voltaren Gel",
       "Diclofenac diethylamine"
     ],
-    "image_url": "/images/drug_029.png"
+    "image_url": "/static/medicine_assets/drug_029.png"
   },
   {
     "id": "drug_030",
@@ -539,7 +539,7 @@
       "Strepsils Cool",
       "2,4-Dichlorobenzyl Alcohol, Amylmetacresol"
     ],
-    "image_url": "/images/drug_030.png"
+    "image_url": "/static/medicine_assets/drug_030.png"
   },
   {
     "id": "drug_031",
@@ -557,7 +557,7 @@
       "Eugica (Vàng)",
       "Eucalyptol, Menthol, Tinh dầu Gừng, Tinh dầu Tần"
     ],
-    "image_url": "/images/drug_031.png"
+    "image_url": "/static/medicine_assets/drug_031.png"
   },
   {
     "id": "drug_032",
@@ -575,7 +575,7 @@
       "Prospan",
       "Cao khô lá thường xuân"
     ],
-    "image_url": "/images/drug_032.png"
+    "image_url": "/static/medicine_assets/drug_032.png"
   },
   {
     "id": "drug_033",
@@ -593,7 +593,7 @@
       "Acemuc 200mg",
       "Acetylcysteine"
     ],
-    "image_url": "/images/drug_033.png"
+    "image_url": "/static/medicine_assets/drug_033.png"
   },
   {
     "id": "drug_034",
@@ -611,7 +611,7 @@
       "Bisolvon 8mg",
       "Bromhexine hydrochloride"
     ],
-    "image_url": "/images/drug_034.png"
+    "image_url": "/static/medicine_assets/drug_034.png"
   },
   {
     "id": "drug_035",
@@ -629,7 +629,7 @@
       "Boganic",
       "Cao Atisô, Cao Rau đắng đất, Cao Bìm bìm"
     ],
-    "image_url": "/images/drug_035.png"
+    "image_url": "/static/medicine_assets/drug_035.png"
   },
   {
     "id": "drug_036",
@@ -647,7 +647,7 @@
       "Prednisolone 5mg",
       "Prednisolone"
     ],
-    "image_url": "/images/drug_036.png"
+    "image_url": "/static/medicine_assets/drug_036.png"
   },
   {
     "id": "drug_037",
@@ -665,7 +665,7 @@
       "Dexamethasone 0.5mg.",
       "Dexamethasone"
     ],
-    "image_url": "/images/drug_037.png"
+    "image_url": "/static/medicine_assets/drug_037.png"
   },
   {
     "id": "drug_038",
@@ -683,7 +683,7 @@
       "Ciprofloxacin 500mg",
       "Ciprofloxacin"
     ],
-    "image_url": "/images/drug_038.png"
+    "image_url": "/static/medicine_assets/drug_038.png"
   },
   {
     "id": "drug_039",
@@ -701,7 +701,7 @@
       "Zithromax 500mg",
       "Azithromycin"
     ],
-    "image_url": "/images/drug_039.png"
+    "image_url": "/static/medicine_assets/drug_039.png"
   },
   {
     "id": "drug_040",
@@ -719,7 +719,7 @@
       "Flagyl 250mg",
       "Metronidazole"
     ],
-    "image_url": "/images/drug_040.png"
+    "image_url": "/static/medicine_assets/drug_040.png"
   },
   {
     "id": "drug_041",
@@ -737,7 +737,7 @@
       "Crestor 10mg.",
       "Rosuvastatin calcium"
     ],
-    "image_url": "/images/drug_041.png"
+    "image_url": "/static/medicine_assets/drug_041.png"
   },
   {
     "id": "drug_042",
@@ -755,7 +755,7 @@
       "Cozaar 50mg",
       "Losartan potassium"
     ],
-    "image_url": "/images/drug_042.png"
+    "image_url": "/static/medicine_assets/drug_042.png"
   },
   {
     "id": "drug_043",
@@ -773,7 +773,7 @@
       "Enalapril 5mg",
       "Enalapril maleate"
     ],
-    "image_url": "/images/drug_043.png"
+    "image_url": "/static/medicine_assets/drug_043.png"
   },
   {
     "id": "drug_044",
@@ -791,7 +791,7 @@
       "Pantoprazole 40mg",
       "Pantoprazole"
     ],
-    "image_url": "/images/drug_044.png"
+    "image_url": "/static/medicine_assets/drug_044.png"
   },
   {
     "id": "drug_045",
@@ -809,7 +809,7 @@
       "Bisalaxyl 5mg",
       "Bisacodyl"
     ],
-    "image_url": "/images/drug_045.png"
+    "image_url": "/static/medicine_assets/drug_045.png"
   },
   {
     "id": "drug_046",
@@ -827,7 +827,7 @@
       "Vitamin C 500mg",
       "Acid Ascorbic"
     ],
-    "image_url": "/images/drug_046.png"
+    "image_url": "/static/medicine_assets/drug_046.png"
   },
   {
     "id": "drug_047",
@@ -845,7 +845,7 @@
       "Celebrex 200mg",
       "Celecoxib"
     ],
-    "image_url": "/images/drug_047.png"
+    "image_url": "/static/medicine_assets/drug_047.png"
   },
   {
     "id": "drug_048",
@@ -863,7 +863,7 @@
       "Cataflam 25mg",
       "Diclofenac potassium"
     ],
-    "image_url": "/images/drug_048.png"
+    "image_url": "/static/medicine_assets/drug_048.png"
   },
   {
     "id": "drug_049",
@@ -881,7 +881,7 @@
       "Deep Heat Rub",
       "Methyl Salicylate, Menthol"
     ],
-    "image_url": "/images/drug_049.png"
+    "image_url": "/static/medicine_assets/drug_049.png"
   },
   {
     "id": "drug_050",
@@ -899,6 +899,6 @@
       "Medrol 4mg",
       "Methylprednisolone"
     ],
-    "image_url": "/images/drug_050.png"
+    "image_url": "/static/medicine_assets/drug_050.png"
   }
 ]
