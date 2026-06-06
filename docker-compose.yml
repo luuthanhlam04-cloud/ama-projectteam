@@ -22,8 +22,8 @@ services:
       - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
-    networks:
-      - ama-network
+    #   networks:
+    #     - ama-network
 
   backend:
     build: ./backend
