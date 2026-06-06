@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import axios from 'axios';
 import { Camera, X, Image as ImageIcon, Send, RefreshCw, Layers3, Scan } from 'lucide-react';
 
 // Giả lập chức năng nén ảnh (Dùng cho chụp trực tiếp)
@@ -12,6 +13,8 @@ const simulateImageCompression = async (imageUrl: string) => {
 export default function CameraScanner() {
   const [scanStatus, setScanStatus] = useState<'setup' | 'scanning' | 'submitting'>('setup');
   const [capturedImages, setCapturedImages] = useState<File[]>([]);
+  const [ocrResult, setOcrResult] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   
   // Công cụ tham chiếu đến thẻ chọn file ẩn
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,19 +41,38 @@ export default function CameraScanner() {
   };
 
   // Hàm xử lý khi người dùng chọn ảnh từ thiết bị
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      // Biến danh sách file chọn được thành một mảng (Array)
       const filesArray = Array.from(e.target.files);
       
-      // Gộp ảnh vừa chọn vào danh sách ảnh hiện có (Giới hạn tối đa 4 ảnh)
       setCapturedImages((prev) => {
         const combined = [...prev, ...filesArray];
-        return combined.slice(0, 4); // Chỉ lấy tối đa 4 ảnh
+        return combined.slice(0, 4);
       });
       
-      // Chuyển thẳng sang bước xem lại và điền form
       setScanStatus('submitting');
+      setIsAnalyzing(true);
+      setOcrResult(null);
+
+      try {
+        const formData = new FormData();
+        formData.append("file", filesArray[0]);
+
+        const response = await axios.post("http://localhost:8000/api/scan/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        
+        if (response.data.status === "success") {
+          setOcrResult(response.data.result);
+        }
+      } catch (error) {
+        console.error("Lỗi khi gọi API scan:", error);
+        alert("Có lỗi xảy ra khi phân tích ảnh bằng AI.");
+      } finally {
+        setIsAnalyzing(false);
+      }
     }
   };
 
@@ -176,30 +198,37 @@ export default function CameraScanner() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-emerald-400 font-semibold">Kết quả phân tích</h3>
               <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-full border border-emerald-500/30">
-                Gemini OCR Hybrid
+                {ocrResult?.method === 'cloud' ? 'Gemini AI Vision' : (ocrResult?.method === 'local_fuzzy_optimized' ? 'Local OCR Engine' : 'AI Analysis')}
               </span>
             </div>
             
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs text-slate-400 mb-1 block">Tên thuốc</label>
-                <input type="text" defaultValue="Panadol Extra" className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
+            {isAnalyzing ? (
+              <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                <RefreshCw className="animate-spin text-emerald-400" size={32} />
+                <p className="text-slate-400 text-sm">Đang phân tích hình ảnh...</p>
               </div>
-              <div>
-                <label className="text-xs text-slate-400 mb-1 block">Thành phần chính</label>
-                <input type="text" defaultValue="Paracetamol 500mg, Caffeine 65mg" className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="text-xs text-slate-400 mb-1 block">Số lượng (Viên)</label>
-                  <input type="number" defaultValue="10" className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs text-slate-400 mb-1 block">Tên thuốc</label>
+                  <input type="text" value={ocrResult?.name || ''} readOnly className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
                 </div>
-                <div className="flex-1">
-                  <label className="text-xs text-slate-400 mb-1 block">Hạn sử dụng</label>
-                  <input type="text" defaultValue="12/2026" className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
+                <div>
+                  <label className="text-xs text-slate-400 mb-1 block">Thành phần chính</label>
+                  <input type="text" value={ocrResult?.generic_name || ''} readOnly className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="text-xs text-slate-400 mb-1 block">Hàm lượng</label>
+                    <input type="text" value={ocrResult?.strength || ''} readOnly className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs text-slate-400 mb-1 block">Phân loại</label>
+                    <input type="text" value={ocrResult?.category || ''} readOnly className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:border-emerald-500/50 focus:outline-none" />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
           
           <div className="p-4 bg-slate-800/90 border-t border-slate-700/50 shrink-0">

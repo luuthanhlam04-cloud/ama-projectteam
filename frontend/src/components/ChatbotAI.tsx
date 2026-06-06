@@ -35,7 +35,7 @@ export default function ChatbotAI() {
 
     try {
       // 2. Gửi yêu cầu qua Backend FastAPI bằng Axios
-      const response = await axios.post('http://localhost:8000/chat', {
+      const response = await axios.post('http://localhost:8000/api/chat', {
         text: userQuery
       });
 
@@ -92,7 +92,11 @@ export default function ChatbotAI() {
                   {msg.images.map((img: any, i: number) => (
                     <div key={i} className="flex flex-col items-center bg-slate-800 border border-slate-600 p-2 rounded-xl">
                       {img.url ? (
-                        <img src={img.url} alt={img.brand_name} className="w-16 h-16 object-cover rounded-lg bg-white" />
+                        <img 
+                          src={img.url.startsWith('http') ? img.url : `http://localhost:8000${img.url}`} 
+                          alt={img.brand_name} 
+                          className="w-16 h-16 object-cover rounded-lg bg-white" 
+                        />
                       ) : (
                         <div className="w-16 h-16 bg-slate-700 rounded-lg flex items-center justify-center text-[10px] text-slate-400 text-center px-1">Chưa có ảnh</div>
                       )}
