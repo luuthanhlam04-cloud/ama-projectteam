@@ -14,8 +14,7 @@ dist/
 .docker/
 
 # Data & AI Models
-data/vector_db_storage/
-*.wav
+backend/qdrant_db/
 *.mp3
 
 # .gitignore

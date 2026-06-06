@@ -21,7 +21,7 @@ services:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - ./data/vector_db_storage:/qdrant/storage
+      - qdrant_data:/qdrant/storage
     networks:
       - ama-network
 
@@ -30,7 +30,6 @@ services:
     container_name: ama_backend
     volumes:
       - ./backend:/app
-      - ./data:/app/data
     ports:
       - "8000:8000"
     env_file:
@@ -62,3 +61,4 @@ networks:
 
 volumes:
   postgres_data:
+  qdrant_data:
