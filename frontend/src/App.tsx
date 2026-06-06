@@ -5,7 +5,6 @@ import MedicineCabinet from './components/MedicineCabinet';
 import { Menu, X, Sun, Moon, Home, Camera, Bot, Pill } from 'lucide-react'; 
 
 function App() {
-  // Thay đổi: Đặt trạng thái mặc định là 'home' thay vì 'camera'
   const [activeTab, setActiveTab] = useState('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -24,7 +23,6 @@ function App() {
       </div>
 
       <div className="w-full space-y-4">
-        {/* Nút Chọn Quét Camera */}
         <button
           onClick={() => handleSelectTab('camera')}
           className={`w-full p-5 rounded-3xl border flex items-center gap-4 transition-all hover:scale-105 active:scale-95 shadow-sm ${
@@ -42,7 +40,6 @@ function App() {
           </div>
         </button>
 
-        {/* Nút Chọn Trợ lý AI */}
         <button
           onClick={() => handleSelectTab('ai')}
           className={`w-full p-5 rounded-3xl border flex items-center gap-4 transition-all hover:scale-105 active:scale-95 shadow-sm ${
@@ -60,7 +57,6 @@ function App() {
           </div>
         </button>
 
-        {/* Nút Chọn Tủ thuốc */}
         <button
           onClick={() => handleSelectTab('cabinet')}
           className={`w-full p-5 rounded-3xl border flex items-center gap-4 transition-all hover:scale-105 active:scale-95 shadow-sm ${
@@ -84,7 +80,7 @@ function App() {
   return (
     <div className={`min-h-screen flex justify-center items-center p-4 transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-slate-100'}`}>
       
-      <div className={`w-full max-w-md h-[852px] rounded-[40px] shadow-2xl flex flex-col overflow-hidden relative border transition-all duration-300 ${
+      <div className={`w-full max-w-md h-[852px] rounded-[40px] flex flex-col overflow-hidden relative border transition-all duration-300 ${
         isDarkMode ? 'bg-slate-800/80 border-slate-700/50 text-white' : 'bg-white border-slate-200 text-slate-800'
       }`}>
         
@@ -113,20 +109,20 @@ function App() {
           </button>
         </div>
 
-        {/* HIỂN THỊ NỘI DUNG DỰA THEO TAB */}
+        {/* HIỂN THỊ NỘI DUNG DỰA THEO TAB VÀ TRUYỀN BIẾN isDarkMode */}
         <div className="flex-1 overflow-hidden flex flex-col relative z-10">
           {activeTab === 'home' && <HomeDashboard />}
-          {activeTab === 'cabinet' && <MedicineCabinet />}
-          {activeTab === 'camera' && <CameraScanner />}
-          {activeTab === 'ai' && <ChatbotAI />}
+          {activeTab === 'cabinet' && <MedicineCabinet isDarkMode={isDarkMode} />}
+          {activeTab === 'camera' && <CameraScanner isDarkMode={isDarkMode} />}
+          {activeTab === 'ai' && <ChatbotAI isDarkMode={isDarkMode} />}
         </div>
 
         {/* LỚP PHỦ MỜ */}
         {isMenuOpen && <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-40 animate-in fade-in duration-200" onClick={() => setIsMenuOpen(false)}></div>}
 
-        {/* THANH SIDEBAR */}
-        <div className={`absolute top-0 left-0 h-full w-[260px] z-50 flex flex-col transform transition-transform duration-300 ease-in-out shadow-[10px_0_30px_rgba(0,0,0,0.3)] ${
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        {/* THANH SIDEBAR ĐÃ SỬA LỖI TRÀN BÓNG MỜ */}
+        <div className={`absolute top-0 left-0 h-full w-[260px] z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${
+          isMenuOpen ? 'translate-x-0 shadow-[10px_0_30px_rgba(0,0,0,0.3)]' : '-translate-x-full shadow-none'
         } ${isDarkMode ? 'bg-slate-800 border-r border-slate-700/50' : 'bg-white border-r border-slate-200'}`}>
           
           <div className={`p-5 flex justify-between items-center border-b ${isDarkMode ? 'border-slate-700/50 bg-slate-900/50' : 'border-slate-200 bg-slate-50'}`}>
@@ -135,7 +131,6 @@ function App() {
           </div>
 
           <div className="flex flex-col p-4 gap-2">
-            {/* THÊM NÚT TRANG CHỦ VÀO MENU */}
             <button onClick={() => handleSelectTab('home')} className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-colors ${
               activeTab === 'home' 
                 ? 'bg-slate-500/20 text-slate-400 font-semibold border border-slate-500/30' 
