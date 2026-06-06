@@ -112,6 +112,16 @@ async def process_medicine_ocr(image_path: str):
                 return {
                     "id": best_match.id,
                     "name": best_match.name,
+                    "brand_name": best_match.name,
+                    "generic_name": getattr(best_match, "generic_name", "N/A"),
+                    "category": getattr(best_match, "category", "N/A"),
+                    "dosage_form": getattr(best_match, "dosage_form", "N/A"),
+                    "strength": getattr(best_match, "strength", "N/A"),
+                    "indications": getattr(best_match, "indications", "N/A"),
+                    "contraindications": getattr(best_match, "contraindications", "N/A"),
+                    "side_effects": getattr(best_match, "side_effects", "N/A"),
+                    "usage_instruction": getattr(best_match, "usage_instruction", "N/A"),
+                    "storage": getattr(best_match, "storage", "N/A"),
                     "confidence": round(highest_score, 2),
                     "method": "local_fuzzy_optimized",
                     "image_url": getattr(best_match, "image_url", f"/static/medicine_assets/{best_match.id}.png")
