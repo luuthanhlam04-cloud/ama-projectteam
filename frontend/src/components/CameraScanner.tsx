@@ -52,14 +52,15 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
 
     // Đẩy dữ liệu vào trạng thái toàn cục (Zustand)
     addMedicine({
-      id: Date.now().toString(),
       name: ocrResult.name,
       // Lấy phân loại hoặc thành phần làm type, nếu không có thì gán mặc định
       type: ocrResult.category || ocrResult.generic_name || 'Chưa phân loại',
       // Dữ liệu từ OCR có thể chứa hàm lượng (strength), tạm dùng làm thông tin hiển thị hoặc để mặc định
       qty: ocrResult.strength || '1', 
       time: 'Chưa cài đặt',
-      status: 'safe'
+      status: 'safe',
+      medicine_id: ocrResult.id || null,
+      medicine_details: ocrResult // Lưu toàn bộ JSON metadata trả về từ OCR/Vision
     });
 
     alert('Đã thêm thuốc vào Tủ thuốc thành công!');

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Search, Plus, Pill, Clock, X, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Plus, Pill, Clock, X, Check, Trash2 } from 'lucide-react';
 import { useMedicineStore } from '../store/medicineStore';
 
 interface MedicineCabinetProps {
@@ -7,7 +7,7 @@ interface MedicineCabinetProps {
 }
 
 export default function MedicineCabinet({ isDarkMode }: MedicineCabinetProps) {
-  const { medicines, addMedicine } = useMedicineStore();
+  const { medicines, addMedicine, fetchMedicines, deleteMedicine, isLoading, error } = useMedicineStore();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -16,19 +16,23 @@ export default function MedicineCabinet({ isDarkMode }: MedicineCabinetProps) {
   const [newQty, setNewQty] = useState('');
   const [newTime, setNewTime] = useState('');
 
+  // Tải dữ liệu từ Backend khi mở component
+  useEffect(() => {
+    fetchMedicines("demo_user_2026");
+  }, [fetchMedicines]);
+
   const filteredMedicines = medicines.filter((med: any) => 
     med.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     med.type.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleManualAdd = () => {
+  const handleManualAdd = async () => {
     if (!newName.trim()) {
       alert("Vui lòng nhập ít nhất Tên thuốc!");
       return;
     }
     
-    addMedicine({
-      id: Date.now().toString(),
+    await addMedicine({
       name: newName,
       type: newType || 'Chưa phân loại',
       qty: newQty || '1',
@@ -61,18 +65,49 @@ export default function MedicineCabinet({ isDarkMode }: MedicineCabinetProps) {
       
       {/* Danh sách thuốc */}
       <div className="flex-1 overflow-y-auto flex flex-col gap-4 p-4 pb-16">
-        {filteredMedicines.length > 0 ? (
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-10 gap-2">
+            <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Đang tải tủ thuốc...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className={`p-3 rounded-xl text-center text-xs border ${
+            isDarkMode ? 'bg-amber-500/10 border-amber-500/25 text-amber-400' : 'bg-amber-50 border-amber-200 text-amber-700'
+          }`}>
+            {error}
+          </div>
+        )}
+
+        {!isLoading && filteredMedicines.length > 0 ? (
           filteredMedicines.map((med: any) => (
-            <div key={med.id} className={`p-5 rounded-3xl border flex gap-4 transition-colors animate-in fade-in slide-in-from-bottom-2 ${
+            <div key={med.id} className={`p-5 rounded-3xl border flex gap-4 transition-colors animate-in fade-in slide-in-from-bottom-2 relative group ${
               isDarkMode ? 'bg-slate-800/60 border-slate-700/50 hover:bg-slate-700/50' : 'bg-white border-slate-200 hover:bg-slate-50 shadow-sm'
             }`}>
+              
+              {/* Nút xóa thuốc thủ công */}
+              <button 
+                onClick={() => {
+                  if (confirm(`Bạn có chắc chắn muốn xóa thuốc "${med.name}" khỏi tủ thuốc cá nhân?`)) {
+                    deleteMedicine(med.id);
+                  }
+                }}
+                className={`absolute top-4 right-4 p-1.5 rounded-lg opacity-60 hover:opacity-100 transition-all ${
+                  isDarkMode ? 'text-red-400 hover:bg-red-500/20' : 'text-red-500 hover:bg-red-50'
+                }`}
+                title="Xóa thuốc khỏi tủ"
+              >
+                <Trash2 size={16} />
+              </button>
+
               <div className={`w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center mt-1 ${
                 isDarkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'
               }`}>
                 <Pill size={24} />
               </div>
-              <div className="flex flex-col w-full">
-                <h3 className={`font-bold text-lg mb-2 ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>{med.name}</h3>
+              <div className="flex flex-col w-full pr-6">
+                <h3 className={`font-bold text-lg mb-2 pr-4 ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>{med.name}</h3>
                 <div className="flex flex-col gap-2">
                   <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Phân loại: <span className={`font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{med.type}</span></p>
                   <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Trong kho: <span className={`font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{med.qty}</span></p>
@@ -88,10 +123,12 @@ export default function MedicineCabinet({ isDarkMode }: MedicineCabinetProps) {
             </div>
           ))
         ) : (
-          <div className={`flex flex-col items-center justify-center h-full gap-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-            <Pill size={40} className="opacity-50" />
-            <p>Không tìm thấy thuốc nào!</p>
-          </div>
+          !isLoading && (
+            <div className={`flex flex-col items-center justify-center h-full gap-2 py-10 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+              <Pill size={40} className="opacity-50" />
+              <p>Không tìm thấy thuốc nào!</p>
+            </div>
+          )
         )}
       </div>
       
