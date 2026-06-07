@@ -5,21 +5,26 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
-from sqlmodel import Session
-from core.database import engine, init_db
+from dotenv import load_dotenv
+load_dotenv()
+
+from sqlmodel import SQLModel, create_engine, Session
 from models import Medicine, User, ConsumptionHistory, UserInventory
 
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://ama_admin:ama_password@localhost:5433/ama_db")
+engine = create_engine(DATABASE_URL, echo=False)
+
+def init_db():
+    print("Creating tables in PostgreSQL...")
+    SQLModel.metadata.create_all(engine)
+
 def load_postgres():
-    print("Đang khởi tạo cấu trúc bảng Postgres...")
     init_db()
     
     data_path = os.path.join(BASE_DIR, "config", "medicine_samples.json")
-    
     if not os.path.exists(data_path):
-        data_path = "/app/config/medicine_samples.json"
-        if not os.path.exists(data_path):
-            print(f"Lỗi: Không tìm thấy file dữ liệu tại {data_path}")
-            return
+        print(f"Error: Data file not found at {data_path}")
+        return
 
     with open(data_path, "r", encoding="utf-8") as f:
         medicines = json.load(f)
@@ -28,14 +33,14 @@ def load_postgres():
         count = 0
         for med_data in medicines:
             if not session.get(Medicine, med_data["id"]):
-                # Chuyển đổi khóa brand_name sang name trước khi nạp vào database
+                # Chuyển đổi khóa brand_name sang name
                 if "brand_name" in med_data:
                     med_data["name"] = med_data.pop("brand_name")
                 
                 session.add(Medicine(**med_data))
                 count += 1
         session.commit()
-    print(f"Postgres: Đã nạp thành công {count} loại thuốc mới.")
+    print(f"Postgres: Successfully loaded {count} new medicines.")
 
 if __name__ == "__main__":
     load_postgres()
