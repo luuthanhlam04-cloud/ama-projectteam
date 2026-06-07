@@ -2,12 +2,16 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from ai_logic.rag_handler import rag_handler
 from ai_logic.gemini_service import gemini_service
+from sqlmodel import Session, select
+from core.database import engine
+from models.user_inventory import UserInventory
 import re
 
 router = APIRouter()
 
 class ChatRequest(BaseModel):
     text: str | None = None
+    user_id: str | None = "demo_user_2026"
 
 @router.post("")
 async def chat_endpoint(user_input: ChatRequest):
@@ -17,47 +21,96 @@ async def chat_endpoint(user_input: ChatRequest):
             raise HTTPException(status_code=400, detail="Vui lòng nhập văn bản.")
         
         query_text = query_text.strip()
+        user_id = user_input.user_id
         
-        # 1. Truy vấn RAG lấy context và danh sách ảnh tổng
-        context, retrieved_images = rag_handler.query_vector_db(query_text)
+        # Biến để lưu trữ ảnh nếu RAG được gọi qua tool
+        retrieved_images_list = []
         
-        # 2. Xây dựng system prompt (giữ nguyên như bạn đã cập nhật)
-        system_prompt = f"""
+        # --- ĐỊNH NGHĨA TOOLS ---
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "search_general_medicine",
+                    "description": "Tìm kiếm thông tin thuốc từ cơ sở dữ liệu y tế tĩnh. Gọi hàm này khi người dùng hỏi về công dụng, liều dùng, tác dụng phụ của một loại thuốc, hoặc hỏi tư vấn triệu chứng bệnh lý chung (không nói là trong tủ thuốc của họ).",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "Câu truy vấn tìm kiếm thuốc hoặc triệu chứng (ví dụ: 'thuốc trị đau đầu', 'paracetamol')"
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_my_cabinet",
+                    "description": "Lấy danh sách các loại thuốc đang có sẵn trong tủ thuốc cá nhân của người dùng. Gọi hàm này khi người dùng hỏi 'tôi đang có thuốc gì', 'trong tủ nhà tôi còn thuốc X không', hoặc 'có thuốc nào chữa bệnh Y trong tủ không'.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
+                }
+            }
+        ]
+        
+        # --- HÀM XỬ LÝ (HANDLERS) ---
+        async def handle_search_general(query: str):
+            nonlocal retrieved_images_list
+            context, images = rag_handler.query_vector_db(query)
+            retrieved_images_list.extend(images)
+            return {"medicine_data_found": context}
+
+        async def handle_get_cabinet():
+            with Session(engine) as session:
+                statement = select(UserInventory).where(UserInventory.user_id == user_id).order_by(UserInventory.id.desc())
+                results = session.exec(statement).all()
+                if not results:
+                    return {"cabinet_inventory": "Tủ thuốc cá nhân hiện đang trống. Không có thuốc nào."}
+                
+                cabinet_data = []
+                for item in results:
+                    cabinet_data.append({
+                        "name": item.name,
+                        "type": item.type,
+                        "quantity": item.qty,
+                        "status": item.status,
+                        "details": item.medicine_details
+                    })
+                return {"cabinet_inventory": cabinet_data}
+
+        tool_handlers = {
+            "search_general_medicine": handle_search_general,
+            "get_my_cabinet": handle_get_cabinet
+        }
+
+        # --- SYSTEM PROMPT MỚI ---
+        system_prompt = """
 Bạn là trợ lý y tế ảo chuyên nghiệp quản lý tủ thuốc gia đình.
-Dưới đây là TOÀN BỘ danh sách các loại thuốc hiện có trong tủ:
+Nếu người dùng chỉ chào hỏi bình thường, hãy chào lại thân thiện và hỏi họ cần giúp gì.
+KHI NGƯỜI DÙNG HỎI VỀ THUỐC HAY BỆNH, HÃY DÙNG TOOL PHÙ HỢP ĐỂ TÌM THÔNG TIN.
 
-<Danh_sách_thuốc_hiện_có>
-{context}
-</Danh_sách_thuốc_hiện_có>
-
-QUY TẮC TRẢ LỜI (tuân thủ nghiêm ngặt, ưu tiên cao nhất là an toàn người dùng):
-
-1. **PHÁT HIỆN ĐỐI TƯỢNG NHẠY CẢM**: Nếu người dùng đề cập đến bất kỳ từ khóa nào sau đây, bạn PHẢI đặt cảnh báo an toàn lên ĐẦU tiên, TRƯỚC KHI liệt kê bất kỳ thuốc nào:
-   - "mang thai", "có thai", "thai kỳ", "bà bầu" → Cảnh báo: "Thai kỳ là giai đoạn rất nhạy cảm. Tuyệt đối không tự ý dùng bất kỳ thuốc nào, kể cả Paracetamol, mà không có chỉ định của bác sĩ. Hãy tham khảo ý kiến bác sĩ trước khi dùng bất kỳ thuốc nào."
-   - "trẻ em", "bé", "con tôi" → Cảnh báo về liều lượng và khuyến cáo hỏi bác sĩ nhi khoa.
-   - "suy gan", "suy thận", "loét dạ dày", "hen suyễn" → Đẩy chống chỉ định của các thuốc liên quan lên đầu.
-
-2. **LIỆT KÊ THUỐC**:
-   - Chỉ liệt kê các thuốc thực sự phù hợp với triệu chứng.
-   - Với mỗi thuốc, cung cấp: tên, phân loại, chỉ định (diễn giải sát với triệu chứng), cách dùng cụ thể, chống chỉ định/lưu ý.
-   - Sắp xếp theo thứ tự ưu tiên an toàn: **Paracetamol > thuốc không kê đơn an toàn > NSAID > khác**.
-   - Đối với phụ nữ mang thai, chỉ đề xuất Paracetamol (nếu thực sự cần) và phải kèm dòng: "Cần hỏi ý kiến bác sĩ trước khi dùng, kể cả Paracetamol."
-
-3. **KHÔNG DÙNG THUỐC**:
-   - Nếu có thuốc chống chỉ định rõ cho thai kỳ (ví dụ: Berberin, Decolgen Forte, Tiffy, Ibuprofen, ...), hãy nêu rõ "Không nên dùng thuốc này khi mang thai" và giải thích ngắn gọn.
-   - Nếu không có thuốc nào phù hợp an toàn, hãy khuyến nghị các biện pháp không dùng thuốc (nghỉ ngơi, uống nhiều nước, súc miệng nước muối, xông hơi...) và khuyên đi khám bác sĩ.
-
-4. **LUÔN THÊM CÂU CẢNH BÁO** (ở cuối hoặc xen kẽ): "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ. Nếu triệu chứng nặng, kéo dài hoặc có dấu hiệu nguy hiểm (sốt cao, nôn mửa, đau dữ dội, chảy máu...), hãy đến cơ sở y tế ngay."
-
-5. **TRÁNH LẶP THÔNG TIN**: Không lặp lại cùng một tên thuốc hoặc cùng một câu cảnh báo nhiều lần trong cùng một phản hồi.
-
-6. **NẾU KHÔNG CÓ THUỐC PHÙ HỢP**: Trả lời chính xác: "Hiện tại trong kho không có thuốc nào phù hợp với yêu cầu của bạn." và kèm theo khuyến cáo chung.
+QUY TẮC TRẢ LỜI:
+1. **PHÁT HIỆN ĐỐI TƯỢNG NHẠY CẢM**: "mang thai", "trẻ em", "suy gan"... CẢNH BÁO AN TOÀN ĐẦU TIÊN!
+2. **LIỆT KÊ THUỐC**: Nếu họ hỏi thuốc trong tủ, chỉ khuyên dùng những thuốc mà tủ thuốc trả về. Nếu tủ có Paracetamol và phù hợp, hãy khuyên dùng. Sắp xếp: Paracetamol > thuốc không kê đơn > NSAID.
+3. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
+4. **KHÔNG CÓ THUỐC**: Nếu tìm tủ không có thuốc phù hợp, hãy khuyên họ đi mua hoặc đi khám.
 """
         
         # 3. Gửi sang Gemini
-        bot_reply = await gemini_service.get_response(system_prompt, query_text)
+        bot_reply = await gemini_service.get_response_with_tools(
+            system_prompt=system_prompt, 
+            user_query=query_text,
+            tools=tools,
+            tool_handlers=tool_handlers
+        )
         
-        # 4. Lọc ảnh cải tiến: dựa trên câu, không chỉ 50 ký tự
+        # 4. Lọc ảnh cải tiến
         final_images = []
         bot_reply_lower = bot_reply.lower()
         
@@ -72,7 +125,7 @@ QUY TẮC TRẢ LỜI (tuân thủ nghiêm ngặt, ưu tiên cao nhất là an t
         sentences = re.split(r'[.!?]', bot_reply_lower)
         sentences = [s.strip() for s in sentences if s.strip()]
         
-        for img in retrieved_images:
+        for img in retrieved_images_list:
             brand_name = img["brand_name"]
             brand_lower = brand_name.lower()
             if brand_lower not in bot_reply_lower:
@@ -90,7 +143,7 @@ QUY TẮC TRẢ LỜI (tuân thủ nghiêm ngặt, ưu tiên cao nhất là an t
                     final_images.append(img)
         
         # Nếu bot nói không có thuốc phù hợp thì clear ảnh
-        if "hiện tại trong kho không có thuốc nào" in bot_reply_lower:
+        if "hiện tại trong kho không có thuốc nào" in bot_reply_lower or "tủ thuốc cá nhân hiện đang trống" in bot_reply_lower:
             final_images = []
         
         # Log
