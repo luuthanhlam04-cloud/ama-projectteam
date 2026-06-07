@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 venv/
 .env
+.env.*
+!.env.example
 
 # Node
 node_modules/
@@ -14,9 +16,9 @@ dist/
 .docker/
 
 # Data & AI Models
-backend/qdrant_db/
+data/
 *.mp3
 
-# .gitignore
+# Uploads
 backend/static/user_uploads/*
 !backend/static/user_uploads/.gitkeep
