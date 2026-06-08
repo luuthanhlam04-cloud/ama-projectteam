@@ -109,7 +109,7 @@ async def chat_endpoint(
                 statement = select(UserInventory).where(UserInventory.user_id == user_id).order_by(UserInventory.id.desc())
                 results = session.exec(statement).all()
                 if not results:
-                    return {"cabinet_inventory": "Tủ thuốc cá nhân hiện đang trống. Không có thuốc nào."}
+                    return {"cabinet_inventory": "Tủ thuốc cá nhân hiện đang trống. YÊU CẦU HỆ THỐNG: BẠN BẮT BUỘC PHẢI GỌI TOOL `search_general_medicine` NGAY LẬP TỨC ĐỂ TÌM THUỐC MUA NGOÀI CHO NGƯỜI DÙNG, TUYỆT ĐỐI KHÔNG ĐƯỢC TỪ CHỐI TƯ VẤN."}
                 
                 cabinet_data = []
                 for item in results:
@@ -130,16 +130,18 @@ async def chat_endpoint(
 
         # --- SYSTEM PROMPT MỚI ---
         system_prompt = """Bạn là trợ lý y tế ảo chuyên nghiệp quản lý tủ thuốc gia đình.
+GIAO TIẾP 100% BẰNG TIẾNG VIỆT CHUẨN. Tuyệt đối không dùng các từ ngữ kỳ lạ như "Selama".
 Nếu người dùng chỉ chào hỏi bình thường, hãy chào lại thân thiện và hỏi họ cần giúp gì.
 KHI NGƯỜI DÙNG HỎI VỀ THUỐC HAY BỆNH, HÃY DÙNG TOOL PHÙ HỢP ĐỂ TÌM THÔNG TIN.
 
 QUY TẮC TRẢ LỜI:
 1. **PHÁT HIỆN ĐỐI TƯỢNG NHẠY CẢM**: "mang thai", "trẻ em", "suy gan"... CẢNH BÁO AN TOÀN ĐẦU TIÊN!
 2. **LIỆT KÊ THUỐC**: Nếu họ hỏi thuốc trong tủ, chỉ khuyên dùng những thuốc mà tủ thuốc trả về. Nếu tủ có Paracetamol và phù hợp, hãy khuyên dùng. Sắp xếp: Paracetamol > thuốc không kê đơn > NSAID.
-3. **TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc từ tủ thuốc, NẾU thuốc đó có `image_url`, bạn PHẢI TỰ ĐỘNG đính kèm ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown: `![Tên thuốc](image_url)`. Tuyệt đối không tự chế ảnh nếu `image_url` không tồn tại.
+3. **TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc (từ tủ thuốc hoặc đề xuất mua ngoài), NẾU thuốc đó có `image_url`, bạn PHẢI TỰ ĐỘNG đính kèm ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown: `![Tên thuốc](image_url)`. Tuyệt đối không tự chế ảnh nếu `image_url` không tồn tại.
 4. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
-5. **KHÔNG CÓ THUỐC TRONG TỦ**: Nếu tủ thuốc cá nhân không có thuốc phù hợp với bệnh lý của họ:
-   - HÃY SỬ DỤNG TOOL `search_general_medicine` để tìm kiếm thông tin về bệnh lý và các loại thuốc điều trị tương ứng từ cơ sở dữ liệu y tế tĩnh.
+5. **KHÔNG CÓ THUỐC TRONG TỦ**: Nếu tủ thuốc cá nhân không có thuốc phù hợp với bệnh lý của họ HOẶC trả về rỗng:
+   - BẠN BẮT BUỘC PHẢI SỬ DỤNG TOOL `search_general_medicine` để tìm kiếm thông tin về bệnh lý và các loại thuốc điều trị tương ứng từ cơ sở dữ liệu y tế tĩnh.
+   - Không được phép trả lời là "tôi không thể tìm thấy" mà chưa gọi tool `search_general_medicine`.
    - Đề xuất MỘT SỐ loại thuốc nên mua ở ngoài (ưu tiên các thuốc mà tool trả về).
    - Với mỗi thuốc đề xuất, trình bày rõ: **Tên thuốc**, **Công dụng**, **Thành phần chính**, và **Lý do đề xuất** phù hợp với triệu chứng của người dùng.
    - BẮT BUỘC chèn ảnh minh họa cho thuốc đề xuất bằng cú pháp `![Tên thuốc](image_url)` (Lấy `image_url` từ dữ liệu trả về của tool). Tuyệt đối không tự chế ảnh.
