@@ -112,21 +112,36 @@ async def delete_from_inventory(item_id: int):
         if not item:
             raise HTTPException(status_code=404, detail="Không tìm thấy thuốc trong tủ")
         
+        print(f"--- [DEBUG] --- Deleting item {item_id}: image_url={item.image_url}")
+        
         # Xóa ảnh trên Cloudinary nếu có
-        if item.image_url and "cloudinary.com" in item.image_url:
+        if item.image_url and "cloudinary.com" in str(item.image_url):
             try:
+                import cloudinary
                 import cloudinary.uploader
+                import os
+                from dotenv import load_dotenv
+                
+                # Cố gắng nạp biến môi trường từ .env nội bộ của backend
+                load_dotenv('/app/.env')
+                
                 # Trích xuất public_id từ URL Cloudinary
-                # VD: .../upload/v12345/p-innovation/medicines/abc.jpg -> p-innovation/medicines/abc
-                parts = item.image_url.split('/upload/')
+                url_str = str(item.image_url)
+                parts = url_str.split('/upload/')
                 if len(parts) == 2:
                     path_parts = parts[1].split('/')
                     if path_parts[0].startswith('v') and path_parts[0][1:].isdigit():
                         path_parts.pop(0)
                     public_id = '/'.join(path_parts).rsplit('.', 1)[0]
-                    cloudinary.uploader.destroy(public_id)
+                    
+                    # Cấu hình rõ ràng để tránh lỗi không tìm thấy credentials
+                    cloudinary.config(url=os.environ.get('CLOUDINARY_URL'))
+                    res = cloudinary.uploader.destroy(public_id)
+                    print(f"--- [INFO: Cloudinary Delete Result] --- {res}")
             except Exception as e:
+                import traceback
                 print(f"--- [WARNING: Could not delete image on Cloudinary] --- Error: {e}")
+                traceback.print_exc()
 
         user_id_int = int(item.user_id) if item.user_id.isdigit() else 9999
         log_entry = ConsumptionHistory(
