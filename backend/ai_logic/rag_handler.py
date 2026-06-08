@@ -9,10 +9,7 @@ load_dotenv()
 
 class RAGHandler:
     def __init__(self):
-        # Đồng nhất embedding model với file ingest_rag.py
-        self.embeddings = HuggingFaceEmbeddings(
-            model_name="paraphrase-multilingual-MiniLM-L12-v2"  # sửa từ all-MiniLM-L6-v2
-        )
+        self._embeddings = None
         
         self.json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "config", "medicine_samples.json"))
         
@@ -40,6 +37,15 @@ class RAGHandler:
             "huyết áp": ["tăng huyết áp", "cao huyết áp"],
             "táo bón": ["táo bón", "khó đi ngoài"],
         }
+
+    @property
+    def embeddings(self):
+        """Lazy khởi tạo HuggingFaceEmbeddings khi truy cập"""
+        if self._embeddings is None:
+            self._embeddings = HuggingFaceEmbeddings(
+                model_name="paraphrase-multilingual-MiniLM-L12-v2"
+            )
+        return self._embeddings
 
     @property
     def vector_store(self):

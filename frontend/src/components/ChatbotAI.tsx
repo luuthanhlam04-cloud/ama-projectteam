@@ -9,7 +9,6 @@ interface Message {
   audioUrl?: string; 
 }
 
-// 1. KHAI BÁO INTERFACE ĐỂ NHẬN BIẾN TỪ APP.TSX
 interface ChatbotAIProps {
   isDarkMode: boolean;
 }
@@ -39,13 +38,27 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
     setIsLoading(true);
 
     try {
+      const storedSessionId = localStorage.getItem('ama_session_id');
+      const headers: any = {};
+      if (storedSessionId) {
+        headers['X-Session-ID'] = storedSessionId;
+      }
+
       const response = await axios.post('http://localhost:8000/api/chat', {
         text: userQuery,
         inventory: currentInventory, 
-        history: messages.slice(-5)  
+        history: [] // Backend bây giờ tự quản lý lịch sử thông qua Redis
+      }, {
+        headers,
+        withCredentials: true
       });
 
       const data = response.data;
+      
+      // Lưu trữ Session ID trả về từ Backend
+      if (data.session_id) {
+        localStorage.setItem('ama_session_id', data.session_id);
+      }
       
       const newAiMessage: Message = { 
         sender: 'ai', 
@@ -72,8 +85,39 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
     }
   };
 
+  const handleClearHistory = async () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện này để bảo mật dữ liệu?")) {
+      setIsLoading(true);
+      try {
+        const storedSessionId = localStorage.getItem('ama_session_id');
+        const headers: any = {};
+        if (storedSessionId) {
+          headers['X-Session-ID'] = storedSessionId;
+        }
+
+        await axios.post('http://localhost:8000/api/chat/clear-session', {}, {
+          headers,
+          withCredentials: true
+        });
+
+        // Xóa thông tin session ở localStorage
+        localStorage.removeItem('ama_session_id');
+        
+        // Reset giao diện về lời chào mặc định
+        setMessages([
+          { sender: 'ai', text: 'Tôi đã xóa sạch lịch sử hội thoại trên bộ nhớ. Tôi có thể hỗ trợ gì thêm cho bạn?' }
+        ]);
+        alert("Đã xóa lịch sử trò chuyện thành công!");
+      } catch (error) {
+        console.error("Lỗi khi xóa session:", error);
+        alert("Không thể xóa lịch sử hội thoại trên hệ thống. Vui lòng thử lại.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
-    // 2. ĐỔI MÀU NỀN TỔNG THỂ CỦA KHUNG CHAT
     <div className={`flex flex-col h-full rounded-2xl border overflow-hidden relative transition-colors duration-300 ${
       isDarkMode ? 'bg-slate-800/50 border-slate-600/50' : 'bg-white border-slate-200'
     }`}>
@@ -90,6 +134,27 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
         </span>
       </div>
 
+      {/* THANH ĐẦU ĐỀ CHATBOT VỚI NÚT XÓA LỊCH SỬ */}
+      <div className={`px-4 py-2 border-b flex items-center justify-between shrink-0 ${
+        isDarkMode ? 'bg-slate-800/80 border-slate-700/50' : 'bg-slate-50 border-slate-200'
+      }`}>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span className={`text-[11px] font-semibold ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>Hội thoại bảo mật</span>
+        </div>
+        <button
+          onClick={handleClearHistory}
+          disabled={isLoading || messages.length <= 1}
+          className={`text-[11px] px-2.5 py-1 rounded-xl font-medium transition-all hover:scale-105 active:scale-95 ${
+            isDarkMode 
+              ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 disabled:opacity-30 disabled:pointer-events-none' 
+              : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 disabled:opacity-30 disabled:pointer-events-none'
+          }`}
+        >
+          Xóa lịch sử
+        </button>
+      </div>
+
       {/* VÙNG HIỂN THỊ TIN NHẮN */}
       <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
         {messages.map((msg, index) => (
@@ -103,7 +168,6 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
             </div>
             
             <div className={`flex flex-col gap-2 max-w-[80%]`}>
-              {/* MÀU SẮC CHO BONG BÓNG CHAT */}
               <div className={`p-3 rounded-2xl text-sm whitespace-pre-wrap ${
                 msg.sender === 'user' 
                   ? (isDarkMode ? 'bg-emerald-500/20 text-emerald-100 border border-emerald-500/30 rounded-tr-none' : 'bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-tr-none') 
@@ -123,7 +187,6 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
                 )}
               </div>
 
-              {/* MÀU SẮC CHO ẢNH RAG */}
               {msg.images && msg.images.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-1">
                   {msg.images.map((img: any, i: number) => (
@@ -152,7 +215,6 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
           </div>
         ))}
         
-        {/* HIỆU ỨNG TYPING */}
         {isLoading && (
           <div className="flex gap-3 flex-row items-center">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`}>

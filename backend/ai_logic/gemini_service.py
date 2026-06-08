@@ -19,26 +19,30 @@ class GeminiService:
         )
         self.model = "google/gemini-2.5-flash-lite"
 
-    async def get_response(self, system_prompt: str, user_query: str) -> str:
+    async def get_response(self, system_prompt: str, user_query: str, history: list = None) -> str:
         try:
+            messages = [{"role": "system", "content": system_prompt}]
+            if history:
+                for msg in history:
+                    messages.append({"role": msg["role"], "content": msg["content"]})
+            messages.append({"role": "user", "content": user_query})
+
             completion = await self.client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_query}
-                ]
+                messages=messages
             )
             return completion.choices[0].message.content
         except Exception as e:
             print(f"Lỗi khi gọi OpenRouter: {e}")
             raise Exception("Không thể kết nối tới mô hình AI.")
 
-    async def get_response_with_tools(self, system_prompt: str, user_query: str, tools: list = None, tool_handlers: dict = None) -> str:
+    async def get_response_with_tools(self, system_prompt: str, user_query: str, tools: list = None, tool_handlers: dict = None, history: list = None) -> str:
         try:
-            messages = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_query}
-            ]
+            messages = [{"role": "system", "content": system_prompt}]
+            if history:
+                for msg in history:
+                    messages.append({"role": msg["role"], "content": msg["content"]})
+            messages.append({"role": "user", "content": user_query})
             
             completion = await self.client.chat.completions.create(
                 model=self.model,

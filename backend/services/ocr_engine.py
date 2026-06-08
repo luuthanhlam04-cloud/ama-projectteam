@@ -16,7 +16,14 @@ except ImportError:
 
 load_dotenv()
 
-reader = easyocr.Reader(['vi', 'en'], gpu=False)
+_reader = None
+
+def get_reader():
+    global _reader
+    if _reader is None:
+        _reader = easyocr.Reader(['vi', 'en'], gpu=False)
+    return _reader
+
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
 CHAT_MODEL = os.getenv("CHAT_MODEL", "google/gemini-2.5-flash-lite")
 
@@ -30,7 +37,11 @@ async def call_openrouter_vision(image_path: str):
     # Ép buộc mô hình trả về cấu trúc JSON thuần túy
     system_prompt = """Identify the medicine from the image. Return ONLY a raw JSON object with no markdown formatting. The JSON must contain the exact following keys:
 "brand_name" (string), "generic_name" (string), "category" (string), "dosage_form" (string), "strength" (string), "indications" (string), "contraindications" (string), "side_effects" (string), "usage_instruction" (string), "storage" (string), "search_keywords" (array of strings).
-If any information is unknown, assign the value "N/A"."""
+If any information is unknown, assign the value "N/A".
+IMPORTANT LANGUAGE INSTRUCTIONS:
+1. The "category" field MUST be written in Vietnamese (e.g., Thuốc giảm đau, Kháng sinh, Thuốc trị cảm cúm...).
+2. The "indications", "contraindications", "side_effects", "usage_instruction", and "storage" fields MUST be in Vietnamese.
+3. DO NOT translate "brand_name", "generic_name", "dosage_form", and "strength". Keep them in their original international medical terminology (English)."""
 
     async with httpx.AsyncClient() as client:
         try:
@@ -79,7 +90,7 @@ async def process_medicine_ocr(image_path: str):
     detected_text = ""
     try:
         loop = asyncio.get_event_loop()
-        results = await loop.run_in_executor(None, lambda: reader.readtext(image_path, detail=0, batch_size=1))
+        results = await loop.run_in_executor(None, lambda: get_reader().readtext(image_path, detail=0, batch_size=1))
         detected_text = " ".join(results).lower().strip()
     except Exception as e:
         print(f"OCR Local Error: {e}")

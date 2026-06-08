@@ -21,6 +21,10 @@ RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://
 # 4. Cài đặt các thư viện còn lại trong requirements
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 4b. Tải sẵn các mô hình EasyOCR và HuggingFace Embedding trong quá trình build để không bị block lúc runtime
+RUN python -c "import easyocr; easyocr.Reader(['vi', 'en'], gpu=False)"
+RUN python -c "from langchain_huggingface import HuggingFaceEmbeddings; HuggingFaceEmbeddings(model_name='paraphrase-multilingual-MiniLM-L12-v2')"
+
 # 5. Sao chép toàn bộ mã nguồn
 COPY . .
 

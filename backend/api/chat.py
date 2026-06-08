@@ -1,11 +1,18 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header, Response, Cookie
 from pydantic import BaseModel
+from typing import Optional
 from ai_logic.rag_handler import rag_handler
 from ai_logic.gemini_service import gemini_service
 from sqlmodel import Session, select
 from core.database import engine
 from models.user_inventory import UserInventory
+from services.redis_service import redis_service, generate_signed_session_id, verify_session_id
 import re
+import logging
+
+# Setup Logger
+logger = logging.getLogger("ama_chat_api")
+logger.setLevel(logging.DEBUG)
 
 router = APIRouter()
 
@@ -14,8 +21,36 @@ class ChatRequest(BaseModel):
     user_id: str | None = "demo_user_2026"
 
 @router.post("")
-async def chat_endpoint(user_input: ChatRequest):
+async def chat_endpoint(
+    user_input: ChatRequest,
+    response: Response,
+    x_session_id: Optional[str] = Header(None, alias="X-Session-ID"),
+    session_id: Optional[str] = Cookie(None)
+):
     try:
+        # 1. Xác thực và quản lý Session ID
+        signed_session_id = x_session_id or session_id
+        session_uuid = None
+        
+        if signed_session_id:
+            session_uuid = verify_session_id(signed_session_id)
+            
+        if not session_uuid:
+            # Sinh session mới nếu rỗng hoặc chữ ký không hợp lệ
+            signed_session_id = generate_signed_session_id()
+            session_uuid = verify_session_id(signed_session_id)
+            logger.info(f"Session verification failed or session is new. Issued signed session ID: {signed_session_id}")
+        
+        # Đặt cookie HttpOnly bảo mật và header phản hồi
+        response.headers["X-Session-ID"] = signed_session_id
+        response.set_cookie(
+            key="session_id",
+            value=signed_session_id,
+            httponly=True,
+            samesite="lax",
+            secure=False  # Đặt là True nếu chạy qua HTTPS
+        )
+
         query_text = user_input.text
         if not query_text or not query_text.strip():
             raise HTTPException(status_code=400, detail="Vui lòng nhập văn bản.")
@@ -23,6 +58,9 @@ async def chat_endpoint(user_input: ChatRequest):
         query_text = query_text.strip()
         user_id = user_input.user_id
         
+        # 2. Lấy lịch sử hội thoại từ Redis (Fallback tự động nếu Redis offline)
+        history = await redis_service.get_history(session_uuid)
+
         # Biến để lưu trữ ảnh nếu RAG được gọi qua tool
         retrieved_images_list = []
         
@@ -90,8 +128,7 @@ async def chat_endpoint(user_input: ChatRequest):
         }
 
         # --- SYSTEM PROMPT MỚI ---
-        system_prompt = """
-Bạn là trợ lý y tế ảo chuyên nghiệp quản lý tủ thuốc gia đình.
+        system_prompt = """Bạn là trợ lý y tế ảo chuyên nghiệp quản lý tủ thuốc gia đình.
 Nếu người dùng chỉ chào hỏi bình thường, hãy chào lại thân thiện và hỏi họ cần giúp gì.
 KHI NGƯỜI DÙNG HỎI VỀ THUỐC HAY BỆNH, HÃY DÙNG TOOL PHÙ HỢP ĐỂ TÌM THÔNG TIN.
 
@@ -102,12 +139,13 @@ QUY TẮC TRẢ LỜI:
 4. **KHÔNG CÓ THUỐC**: Nếu tìm tủ không có thuốc phù hợp, hãy khuyên họ đi mua hoặc đi khám.
 """
         
-        # 3. Gửi sang Gemini
+        # 3. Gửi sang Gemini kèm theo history từ Redis và Tools
         bot_reply = await gemini_service.get_response_with_tools(
             system_prompt=system_prompt, 
             user_query=query_text,
             tools=tools,
-            tool_handlers=tool_handlers
+            tool_handlers=tool_handlers,
+            history=history
         )
         
         # 4. Lọc ảnh cải tiến
@@ -121,22 +159,26 @@ QUY TẮC TRẢ LỜI:
             "không khuyến cáo", "không an toàn", "có thể gây hại"
         ]
         
-        # Tách câu dựa trên dấu kết thúc câu
-        sentences = re.split(r'[.!?]', bot_reply_lower)
-        sentences = [s.strip() for s in sentences if s.strip()]
-        
         for img in retrieved_images_list:
             brand_name = img["brand_name"]
             brand_lower = brand_name.lower()
-            if brand_lower not in bot_reply_lower:
+            
+            # Kiểm tra xem tên thuốc hoặc từ khóa chính của thuốc có trong phản hồi không
+            brand_pos = bot_reply_lower.find(brand_lower)
+            if brand_pos == -1:
+                first_word = brand_lower.split()[0]
+                if len(first_word) > 3:
+                    brand_pos = bot_reply_lower.find(first_word)
+            
+            if brand_pos == -1:
                 continue
             
-            is_negative = False
-            for sent in sentences:
-                if brand_lower in sent:
-                    if any(phrase in sent for phrase in negative_phrases):
-                        is_negative = True
-                        break
+            # Lấy cửa sổ ngữ cảnh xung quanh vị trí xuất hiện của tên thuốc
+            window_start = max(0, brand_pos - 150)
+            window_end = min(len(bot_reply_lower), brand_pos + 500)
+            context_window = bot_reply_lower[window_start:window_end]
+            
+            is_negative = any(phrase in context_window for phrase in negative_phrases)
             
             if not is_negative:
                 if brand_name not in [i["brand_name"] for i in final_images]:
@@ -146,20 +188,43 @@ QUY TẮC TRẢ LỜI:
         if "hiện tại trong kho không có thuốc nào" in bot_reply_lower or "tủ thuốc cá nhân hiện đang trống" in bot_reply_lower:
             final_images = []
         
+        # 7. Lưu tin nhắn mới vào Redis (nếu Redis online)
+        await redis_service.save_message(session_uuid, "user", query_text)
+        await redis_service.save_message(session_uuid, "assistant", bot_reply)
+        
         # Log
-        print(f"User: {query_text}")
-        print(f"Bot reply preview: {bot_reply[:200]}...")
-        print(f"Matched images: {[i['brand_name'] for i in final_images]}")
+        logger.debug(f"User query: {query_text}")
+        logger.debug(f"Bot reply preview: {bot_reply[:200]}...")
+        logger.debug(f"Matched images: {[i['brand_name'] for i in final_images]}")
         
         return {
             "user_ask": query_text,
             "bot_reply": bot_reply,
             "matched_images": final_images,
+            "session_id": signed_session_id,
             "status": "Thành công"
         }
         
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error in chat_endpoint: {e}")
+        logger.error(f"Error in chat_endpoint: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/clear-session")
+async def clear_session_endpoint(
+    response: Response,
+    x_session_id: Optional[str] = Header(None, alias="X-Session-ID"),
+    session_id: Optional[str] = Cookie(None)
+):
+    signed_session_id = x_session_id or session_id
+    if signed_session_id:
+        session_uuid = verify_session_id(signed_session_id)
+        if session_uuid:
+            await redis_service.clear_session(session_uuid)
+            
+    # Xóa session ở Client
+    response.delete_cookie(key="session_id")
+    response.headers["X-Session-ID"] = ""
+    logger.info(f"Cleared session history for signed session ID: {signed_session_id}")
+    return {"status": "success", "message": "Session history cleared successfully"}

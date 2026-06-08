@@ -32,3 +32,6 @@ httpx
 # Fuzzy Matching (Merged from OCR branch)
 rapidfuzz
 python-Levenshtein
+
+# Session and Context Storage
+redis

@@ -25,6 +25,16 @@ services:
     #   networks:
     #     - ama-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: ama_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ama-network
+
   backend:
     build: ./backend
     container_name: ama_backend
@@ -37,6 +47,7 @@ services:
     depends_on:
       - db
       - qdrant
+      - redis
     networks:
       - ama-network
 
@@ -52,6 +63,7 @@ services:
     tty: true
     depends_on:
       - backend
+      - redis
     networks:
       - ama-network
 
@@ -62,3 +74,4 @@ networks:
 volumes:
   postgres_data:
   qdrant_data:
+  redis_data:
