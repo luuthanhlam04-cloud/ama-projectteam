@@ -70,7 +70,7 @@ async def chat_endpoint(
                 "type": "function",
                 "function": {
                     "name": "search_general_medicine",
-                    "description": "Tìm kiếm thông tin thuốc từ cơ sở dữ liệu y tế tĩnh. Gọi hàm này khi người dùng hỏi về công dụng, liều dùng, tác dụng phụ của một loại thuốc, hoặc hỏi tư vấn triệu chứng bệnh lý chung (không nói là trong tủ thuốc của họ).",
+                    "description": "Tìm kiếm thông tin thuốc từ cơ sở dữ liệu tĩnh (CHỨA 50 LOẠI THUỐC CÓ SẴN ẢNH VÀ THÔNG TIN CHI TIẾT). GỌI HÀM NÀY MỌI LÚC khi tủ thuốc của người dùng bị trống để lấy dữ liệu đề xuất thuốc mua ngoài.",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -138,7 +138,11 @@ QUY TẮC TRẢ LỜI:
 2. **LIỆT KÊ THUỐC**: Nếu họ hỏi thuốc trong tủ, chỉ khuyên dùng những thuốc mà tủ thuốc trả về. Nếu tủ có Paracetamol và phù hợp, hãy khuyên dùng. Sắp xếp: Paracetamol > thuốc không kê đơn > NSAID.
 3. **TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc từ tủ thuốc, NẾU thuốc đó có `image_url`, bạn PHẢI TỰ ĐỘNG đính kèm ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown: `![Tên thuốc](image_url)`. Tuyệt đối không tự chế ảnh nếu `image_url` không tồn tại.
 4. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
-5. **KHÔNG CÓ THUỐC**: Nếu tìm tủ không có thuốc phù hợp, hãy khuyên họ đi mua hoặc đi khám.
+5. **KHÔNG CÓ THUỐC TRONG TỦ**: Nếu tủ thuốc cá nhân không có thuốc phù hợp với bệnh lý của họ:
+   - HÃY SỬ DỤNG TOOL `search_general_medicine` để tìm kiếm thông tin về bệnh lý và các loại thuốc điều trị tương ứng từ cơ sở dữ liệu y tế tĩnh.
+   - Đề xuất MỘT SỐ loại thuốc nên mua ở ngoài (ưu tiên các thuốc mà tool trả về).
+   - Với mỗi thuốc đề xuất, trình bày rõ: **Tên thuốc**, **Công dụng**, **Thành phần chính**, và **Lý do đề xuất** phù hợp với triệu chứng của người dùng.
+   - BẮT BUỘC chèn ảnh minh họa cho thuốc đề xuất bằng cú pháp `![Tên thuốc](image_url)` (Lấy `image_url` từ dữ liệu trả về của tool). Tuyệt đối không tự chế ảnh.
 """
         
         # 3. Gửi sang Gemini kèm theo history từ Redis và Tools
@@ -149,6 +153,9 @@ QUY TẮC TRẢ LỜI:
             tool_handlers=tool_handlers,
             history=history
         )
+        
+        if not bot_reply:
+            bot_reply = "Xin lỗi, hệ thống AI đang quá tải hoặc không thể xử lý câu hỏi của bạn lúc này. Vui lòng thử lại sau."
         
         # 4. Lọc ảnh cải tiến
         final_images = []
