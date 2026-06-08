@@ -16,3 +16,6 @@ class UserInventory(SQLModel, table=True):
     
     # Cột JSON lưu chi tiết thông tin thuốc (indications, contraindications...)
     medicine_details: Optional[Dict] = Field(default={}, sa_type=JSON)
+    
+    # Lưu URL tĩnh ảnh chụp thuốc thực tế sau khi phân tích OCR thành công
+    image_url: Optional[str] = Field(default=None, description="URL ảnh lưu trên Cloudinary")

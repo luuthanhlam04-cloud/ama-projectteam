@@ -1,6 +1,6 @@
 import re
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 from typing import List, Optional
 from datetime import datetime
 from sqlmodel import Session, select, delete
@@ -24,6 +24,7 @@ class InventoryAddRequest(BaseModel):
     time: Optional[str] = "Chưa cài đặt"
     medicine_id: Optional[str] = None
     medicine_details: Optional[dict] = {}
+    image_url: Optional[HttpUrl] = None
 
 # --- ENDPOINTS ---
 
@@ -46,7 +47,8 @@ async def get_all_inventory(user_id: str):
                 "status": item.status,
                 "low_stock_threshold": item.low_stock_threshold,
                 "medicine_id": item.medicine_id,
-                "medicine_details": item.medicine_details
+                "medicine_details": item.medicine_details,
+                "image_url": item.image_url
             } for item in results
         ]
         return {"items": items}
@@ -66,7 +68,8 @@ async def add_to_inventory(request: InventoryAddRequest):
             time=request.time or "Chưa cài đặt",
             medicine_id=request.medicine_id,
             status="safe",
-            medicine_details=request.medicine_details or {}
+            medicine_details=request.medicine_details or {},
+            image_url=str(request.image_url) if request.image_url else None
         )
         session.add(item)
         
@@ -94,7 +97,8 @@ async def add_to_inventory(request: InventoryAddRequest):
                 "status": item.status,
                 "low_stock_threshold": item.low_stock_threshold,
                 "medicine_id": item.medicine_id,
-                "medicine_details": item.medicine_details
+                "medicine_details": item.medicine_details,
+                "image_url": item.image_url
             }
         }
 
@@ -108,6 +112,22 @@ async def delete_from_inventory(item_id: int):
         if not item:
             raise HTTPException(status_code=404, detail="Không tìm thấy thuốc trong tủ")
         
+        # Xóa ảnh trên Cloudinary nếu có
+        if item.image_url and "cloudinary.com" in item.image_url:
+            try:
+                import cloudinary.uploader
+                # Trích xuất public_id từ URL Cloudinary
+                # VD: .../upload/v12345/p-innovation/medicines/abc.jpg -> p-innovation/medicines/abc
+                parts = item.image_url.split('/upload/')
+                if len(parts) == 2:
+                    path_parts = parts[1].split('/')
+                    if path_parts[0].startswith('v') and path_parts[0][1:].isdigit():
+                        path_parts.pop(0)
+                    public_id = '/'.join(path_parts).rsplit('.', 1)[0]
+                    cloudinary.uploader.destroy(public_id)
+            except Exception as e:
+                print(f"--- [WARNING: Could not delete image on Cloudinary] --- Error: {e}")
+
         user_id_int = int(item.user_id) if item.user_id.isdigit() else 9999
         log_entry = ConsumptionHistory(
             user_id=user_id_int,
@@ -119,7 +139,7 @@ async def delete_from_inventory(item_id: int):
         session.delete(item)
         session.commit()
         
-        return {"status": "success", "message": "Đã xóa thuốc khỏi tủ thuốc thành công"}
+        return {"status": "success", "message": "Đã xóa thuốc khỏi tủ thuốc và hệ thống lưu trữ ảnh"}
 
 @router.post("/consume")
 async def consume_medicine(request: ConsumeRequest):

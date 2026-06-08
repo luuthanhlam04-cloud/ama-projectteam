@@ -60,7 +60,8 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
       time: 'Chưa cài đặt',
       status: 'safe',
       medicine_id: ocrResult.id || null,
-      medicine_details: ocrResult // Lưu toàn bộ JSON metadata trả về từ OCR/Vision
+      medicine_details: ocrResult, // Lưu toàn bộ JSON metadata trả về từ OCR/Vision
+      image_url: ocrResult.image_url || null
     });
 
     alert('Đã thêm thuốc vào Tủ thuốc thành công!');
@@ -91,8 +92,11 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
         });
         
         if (response.data.status === "success") {
-          // Khi Backend trả về, lưu vào state để hiển thị lên form
-          setOcrResult(response.data.result);
+          // Khi Backend trả về, lưu vào state để hiển thị lên form, kèm image_url
+          setOcrResult({
+            ...response.data.result,
+            image_url: response.data.image_url || null
+          });
         }
       } catch (error) {
         console.error("Lỗi khi gọi API scan:", error);

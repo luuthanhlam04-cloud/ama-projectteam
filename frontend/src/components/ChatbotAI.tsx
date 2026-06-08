@@ -173,7 +173,33 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
                   ? (isDarkMode ? 'bg-emerald-500/20 text-emerald-100 border border-emerald-500/30 rounded-tr-none' : 'bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-tr-none') 
                   : (isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600/50 rounded-tl-none' : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none')
               }`}>
-                {msg.text}
+                {msg.sender === 'user' ? msg.text : (
+                  // Parser đơn giản để biến markdown ![alt](url) thành ảnh và **text** thành in đậm
+                  msg.text.split(/(!\[.*?\]\(.*?\))/g).map((part, idx) => {
+                    const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
+                    if (imgMatch) {
+                      return (
+                        <img 
+                          key={idx}
+                          src={imgMatch[2]} 
+                          alt={imgMatch[1]} 
+                          className="w-full max-w-[250px] rounded-lg my-2 border border-slate-200 shadow-sm"
+                        />
+                      );
+                    }
+                    
+                    // Xử lý in đậm
+                    return (
+                      <span key={idx}>
+                        {part.split(/(\*\*.*?\*\*)/g).map((bPart, bIdx) => {
+                          const boldMatch = bPart.match(/\*\*(.*?)\*\*/);
+                          if (boldMatch) return <strong key={bIdx}>{boldMatch[1]}</strong>;
+                          return bPart;
+                        })}
+                      </span>
+                    );
+                  })
+                )}
                 
                 {msg.audioUrl && (
                   <button 

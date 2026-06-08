@@ -3,6 +3,8 @@ import traceback
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from services.image_processing import preprocess_for_ocr
 from services.ocr_engine import process_medicine_ocr
+import cloudinary
+import cloudinary.uploader
 
 router = APIRouter()
 
@@ -22,9 +24,26 @@ async def scan_medicine(file: UploadFile = File(...)):
         processed_path = preprocess_for_ocr(temp_path)
         result = await process_medicine_ocr(processed_path)
         
+        # --- Tích hợp Upload Cloudinary (Xử lý ngoại lệ độc lập) ---
+        image_url = None
+        try:
+            # Tải ảnh gốc CÓ MÀU lên Cloudinary (thay vì ảnh đã qua tiền xử lý trắng đen)
+            upload_response = cloudinary.uploader.upload(
+                temp_path,
+                folder="p-innovation/medicines"
+            )
+            image_url = upload_response.get("secure_url")
+        except Exception as upload_e:
+            print("--- [WARNING: Cloudinary Upload Failed] ---")
+            print(f"Error: {upload_e}")
+            print("-----------------------------------------")
+            # Không raise lỗi, cho phép tiếp tục trả về kết quả OCR văn bản
+            image_url = None
+
         return {
             "status": "success",
-            "result": result
+            "result": result,
+            "image_url": image_url
         }
 
     except Exception as e:

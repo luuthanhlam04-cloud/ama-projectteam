@@ -35,3 +35,6 @@ python-Levenshtein
 
 # Session and Context Storage
 redis
+
+# Cloud Storage
+cloudinary

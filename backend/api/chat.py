@@ -118,6 +118,7 @@ async def chat_endpoint(
                         "type": item.type,
                         "quantity": item.qty,
                         "status": item.status,
+                        "image_url": item.image_url,
                         "details": item.medicine_details
                     })
                 return {"cabinet_inventory": cabinet_data}
@@ -135,8 +136,9 @@ KHI NGƯỜI DÙNG HỎI VỀ THUỐC HAY BỆNH, HÃY DÙNG TOOL PHÙ HỢP Đ�
 QUY TẮC TRẢ LỜI:
 1. **PHÁT HIỆN ĐỐI TƯỢNG NHẠY CẢM**: "mang thai", "trẻ em", "suy gan"... CẢNH BÁO AN TOÀN ĐẦU TIÊN!
 2. **LIỆT KÊ THUỐC**: Nếu họ hỏi thuốc trong tủ, chỉ khuyên dùng những thuốc mà tủ thuốc trả về. Nếu tủ có Paracetamol và phù hợp, hãy khuyên dùng. Sắp xếp: Paracetamol > thuốc không kê đơn > NSAID.
-3. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
-4. **KHÔNG CÓ THUỐC**: Nếu tìm tủ không có thuốc phù hợp, hãy khuyên họ đi mua hoặc đi khám.
+3. **TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc từ tủ thuốc, NẾU thuốc đó có `image_url`, bạn PHẢI TỰ ĐỘNG đính kèm ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown: `![Tên thuốc](image_url)`. Tuyệt đối không tự chế ảnh nếu `image_url` không tồn tại.
+4. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
+5. **KHÔNG CÓ THUỐC**: Nếu tìm tủ không có thuốc phù hợp, hãy khuyên họ đi mua hoặc đi khám.
 """
         
         # 3. Gửi sang Gemini kèm theo history từ Redis và Tools
