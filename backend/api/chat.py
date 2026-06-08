@@ -144,7 +144,6 @@ QUY TẮC TRẢ LỜI:
    - Không được phép trả lời là "tôi không thể tìm thấy" mà chưa gọi tool `search_general_medicine`.
    - Đề xuất MỘT SỐ loại thuốc nên mua ở ngoài (ưu tiên các thuốc mà tool trả về).
    - Với mỗi thuốc đề xuất, trình bày rõ: **Tên thuốc**, **Công dụng**, **Thành phần chính**, và **Lý do đề xuất** phù hợp với triệu chứng của người dùng.
-   - BẮT BUỘC chèn ảnh minh họa cho thuốc đề xuất bằng cú pháp `![Tên thuốc](image_url)` (Lấy `image_url` từ dữ liệu trả về của tool). Tuyệt đối không tự chế ảnh.
 """
         
         # 3. Gửi sang Gemini kèm theo history từ Redis và Tools

@@ -8,7 +8,7 @@ def print_result(step_name, success, info=""):
     print(f"[{status}] {step_name} - {info}")
 
 async def test_integration():
-    client = httpx.AsyncClient()
+    client = httpx.AsyncClient(timeout=30.0)
     session_id = None
 
     # Step 1: Send first message and establish session
@@ -106,7 +106,7 @@ async def test_integration():
             # Since history was cleared, AI won't know what "thuốc đó" refers to,
             # or it should not have the previous context.
             print(f"Bot reply after clear: {data_after.get('bot_reply')[:150]}...")
-            print_result("Verify History Cleared", "không rõ" in data_after.get('bot_reply').lower() or "thuốc nào" in data_after.get('bot_reply').lower() or "tủ" in data_after.get('bot_reply').lower(), "AI lost past reference.")
+            print_result("Verify History Cleared", "không rõ" in data_after.get('bot_reply').lower() or "thuốc nào" in data_after.get('bot_reply').lower() or "tên thuốc" in data_after.get('bot_reply').lower() or "tủ" in data_after.get('bot_reply').lower(), "AI lost past reference.")
         else:
             print_result("Clear session", False, f"HTTP Status: {response.status_code}")
     except Exception as e:

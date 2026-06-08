@@ -156,63 +156,66 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
         </button>
       </div>
 
-      {/* VÙNG HIỂN THỊ TIN NHẮN */}
-      <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
-        {messages.map((msg, index) => (
-          <div key={index} className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-              msg.sender === 'user' 
-                ? 'bg-emerald-500' 
-                : (isDarkMode ? 'bg-slate-700' : 'bg-slate-200')
-            }`}>
-              {msg.sender === 'user' ? <User size={16} className="text-white" /> : <Bot size={16} className="text-emerald-500" />}
-            </div>
-            
-            <div className={`flex flex-col gap-2 max-w-[80%]`}>
-              <div className={`p-3 rounded-2xl text-sm whitespace-pre-wrap ${
-                msg.sender === 'user' 
-                  ? (isDarkMode ? 'bg-emerald-500/20 text-emerald-100 border border-emerald-500/30 rounded-tr-none' : 'bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-tr-none') 
-                  : (isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600/50 rounded-tl-none' : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none')
-              }`}>
-                {msg.sender === 'user' ? msg.text : (
-                  // Parser đơn giản để biến markdown ![alt](url) thành ảnh và **text** thành in đậm
-                  msg.text.split(/(!\[.*?\]\(.*?\))/g).map((part, idx) => {
-                    const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
-                    if (imgMatch) {
-                      return (
-                        <img 
-                          key={idx}
-                          src={imgMatch[2]} 
-                          alt={imgMatch[1]} 
-                          className="w-full max-w-[250px] rounded-lg my-2 border border-slate-200 shadow-sm"
-                        />
-                      );
-                    }
-                    
-                    // Xử lý in đậm
-                    return (
-                      <span key={idx}>
-                        {part.split(/(\*\*.*?\*\*)/g).map((bPart, bIdx) => {
-                          const boldMatch = bPart.match(/\*\*(.*?)\*\*/);
-                          if (boldMatch) return <strong key={bIdx}>{boldMatch[1]}</strong>;
-                          return bPart;
-                        })}
-                      </span>
-                    );
-                  })
-                )}
-                
-                {msg.audioUrl && (
-                  <button 
-                    onClick={() => new Audio(`http://localhost:8000${msg.audioUrl}`).play()}
-                    className={`mt-2 p-1.5 rounded-full inline-flex items-center gap-1 text-[10px] transition-colors ${
-                      isDarkMode ? 'text-emerald-400 hover:text-emerald-300 bg-slate-800/50' : 'text-emerald-600 hover:text-emerald-700 bg-white shadow-sm'
-                    }`}
-                  >
-                    <Volume2 size={12} /> Phát âm thanh
-                  </button>
-                )}
-              </div>
+
+      {/* VÙNG HIỂN THỊ TIN NHẮN */}
+      <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
+        {messages.map((msg, index) => (
+          <div key={index} className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+              msg.sender === 'user' 
+                ? 'bg-emerald-500' 
+                : (isDarkMode ? 'bg-slate-700' : 'bg-slate-200')
+            }`}>
+              {msg.sender === 'user' ? <User size={16} className="text-white" /> : <Bot size={16} className="text-emerald-500" />}
+            </div>
+            
+            <div className={`flex flex-col gap-2 max-w-[80%]`}>
+              <div className={`p-3 rounded-2xl text-sm whitespace-pre-wrap ${
+                msg.sender === 'user' 
+                  ? (isDarkMode ? 'bg-emerald-500/20 text-emerald-100 border border-emerald-500/30 rounded-tr-none' : 'bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-tr-none') 
+                  : (isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600/50 rounded-tl-none' : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none')
+              }`}>
+                {msg.sender === 'user' ? msg.text : (
+                  // Parser đơn giản để biến markdown ![alt](url) thành ảnh và **text** thành in đậm
+                  msg.text.split(/(!\[.*?\]\(.*?\))/g).map((part, idx) => {
+                    const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
+                    if (imgMatch) {
+                      const imageUrl = imgMatch[2].startsWith('http') ? imgMatch[2] : `http://localhost:8000${imgMatch[2]}`;
+                      return (
+                        <img 
+                          key={idx}
+                          src={imageUrl} 
+                          alt={imgMatch[1]} 
+                          className="w-full max-w-[250px] rounded-lg my-2 border border-slate-200 shadow-sm"
+                        />
+                      );
+                    }
+                    
+                    // Xử lý in đậm
+                    return (
+                      <span key={idx}>
+                        {part.split(/(\*\*.*?\*\*)/g).map((bPart, bIdx) => {
+                          const boldMatch = bPart.match(/\*\*(.*?)\*\*/);
+                          if (boldMatch) return <strong key={bIdx}>{boldMatch[1]}</strong>;
+                          return bPart;
+                        })}
+                      </span>
+                    );
+                  })
+                )}
+                
+                {msg.audioUrl && (
+                  <button 
+                    onClick={() => new Audio(`http://localhost:8000${msg.audioUrl}`).play()}
+                    className={`mt-2 p-1.5 rounded-full inline-flex items-center gap-1 text-[10px] transition-colors ${
+                      isDarkMode ? 'text-emerald-400 hover:text-emerald-300 bg-slate-800/50' : 'text-emerald-600 hover:text-emerald-700 bg-white shadow-sm'
+                    }`}
+                  >
+                    <Volume2 size={12} /> Phát âm thanh
+                  </button>
+                )}
+              </div>
+
 
               {msg.images && msg.images.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-1">
