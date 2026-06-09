@@ -116,7 +116,7 @@ async def chat_endpoint(
                     cabinet_data.append({
                         "name": item.name,
                         "type": item.type,
-                        "strength": item.qty,
+                        "strength": f"{item.qty} {item.unit}",
                         "status": item.status,
                         "image_url": item.image_url,
                         "details": item.medicine_details
