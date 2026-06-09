@@ -38,3 +38,6 @@ redis
 
 # Cloud Storage
 cloudinary
+
+pywebpush
+apscheduler

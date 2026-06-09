@@ -20,11 +20,18 @@ class InventoryAddRequest(BaseModel):
     user_id: str
     name: str
     type: Optional[str] = "Chưa phân loại"
-    qty: Optional[str] = "1"
-    time: Optional[str] = "Chưa cài đặt"
+    qty: Optional[int] = 0
+    unit: Optional[str] = "viên"
+    dosage: Optional[int] = 1
+    time: Optional[str] = ""
     medicine_id: Optional[str] = None
     medicine_details: Optional[dict] = {}
     image_url: Optional[HttpUrl] = None
+
+class PushSubscribeRequest(BaseModel):
+    user_id: str
+    endpoint: str
+    keys: dict
 
 # --- ENDPOINTS ---
 
@@ -43,6 +50,8 @@ async def get_all_inventory(user_id: str):
                 "name": item.name,
                 "type": item.type,
                 "qty": item.qty,
+                "unit": item.unit,
+                "dosage": item.dosage,
                 "time": item.time,
                 "status": item.status,
                 "low_stock_threshold": item.low_stock_threshold,
@@ -59,13 +68,14 @@ async def add_to_inventory(request: InventoryAddRequest):
     Thêm một thuốc mới (hoặc đã quét qua OCR) vào tủ thuốc cá nhân
     """
     with Session(engine) as session:
-        # Tạo bản ghi tủ thuốc cá nhân mới
         item = UserInventory(
             user_id=request.user_id,
             name=request.name,
             type=request.type or "Chưa phân loại",
-            qty=request.qty or "1",
-            time=request.time or "Chưa cài đặt",
+            qty=request.qty or 0,
+            unit=request.unit or "viên",
+            dosage=request.dosage or 1,
+            time=request.time or "",
             medicine_id=request.medicine_id,
             status="safe",
             medicine_details=request.medicine_details or {},
@@ -93,6 +103,8 @@ async def add_to_inventory(request: InventoryAddRequest):
                 "name": item.name,
                 "type": item.type,
                 "qty": item.qty,
+                "unit": item.unit,
+                "dosage": item.dosage,
                 "time": item.time,
                 "status": item.status,
                 "low_stock_threshold": item.low_stock_threshold,
@@ -156,6 +168,28 @@ async def delete_from_inventory(item_id: int):
         
         return {"status": "success", "message": "Đã xóa thuốc khỏi tủ thuốc và hệ thống lưu trữ ảnh"}
 
+class InventoryUpdateRequest(BaseModel):
+    time: Optional[str] = None
+    dosage: Optional[int] = None
+
+@router.put("/{item_id}")
+async def update_inventory_item(item_id: int, request: InventoryUpdateRequest):
+    with Session(engine) as session:
+        item = session.get(UserInventory, item_id)
+        if not item:
+            raise HTTPException(status_code=404, detail="Không tìm thấy thuốc")
+        
+        if request.time is not None:
+            item.time = request.time
+        if request.dosage is not None:
+            item.dosage = request.dosage
+            
+        session.add(item)
+        session.commit()
+        session.refresh(item)
+        
+        return {"status": "success", "item": item}
+
 @router.post("/consume")
 async def consume_medicine(request: ConsumeRequest):
     """
@@ -178,29 +212,21 @@ async def consume_medicine(request: ConsumeRequest):
         if not item:
             raise HTTPException(status_code=404, detail="Không tìm thấy thuốc trong tủ của bạn")
         
-        # Phân tích cú pháp số lượng từ chuỗi (ví dụ "12 viên" -> 12, "1 vỉ" -> 1)
-        qty_str = item.qty
-        match = re.search(r'(\d+)', qty_str)
-        
-        if not match:
-            current_qty = 0
-            unit = qty_str
-        else:
-            current_qty = int(match.group(1))
-            unit = qty_str.replace(match.group(1), '').strip()
-            
+        # Phép trừ logic tồn kho bằng số nguyên (O(1))
+        current_qty = item.qty
         new_qty_num = current_qty - request.dosage
+        
         if new_qty_num < 0:
             raise HTTPException(status_code=400, detail="Không đủ thuốc trong kho để uống liều này")
             
         # Cập nhật số lượng mới
-        item.qty = f"{new_qty_num} {unit}".strip()
+        item.qty = new_qty_num
         
         # Kiểm tra ngưỡng thấp để cảnh báo
         warning = None
         if new_qty_num <= item.low_stock_threshold:
             item.status = "warning"
-            warning = f"Cảnh báo: {item.name} sắp hết (Còn lại {item.qty})"
+            warning = f"Cảnh báo: {item.name} sắp hết (Còn lại {item.qty} {item.unit})"
         else:
             item.status = "safe"
             
@@ -220,6 +246,32 @@ async def consume_medicine(request: ConsumeRequest):
         return {
             "status": "success",
             "new_quantity": new_qty_num,
-            "qty_str": item.qty,
+            "unit": item.unit,
             "warning": warning
         }
+
+@router.post("/push/subscribe")
+async def subscribe_push(request: PushSubscribeRequest):
+    """
+    Lưu cấu hình Web Push (Endpoint, Keys) của thiết bị người dùng vào DB
+    """
+    from models.subscription import NotificationSubscription
+    with Session(engine) as session:
+        # Kiểm tra xem endpoint này đã tồn tại chưa
+        statement = select(NotificationSubscription).where(NotificationSubscription.endpoint == request.endpoint)
+        existing = session.exec(statement).first()
+        
+        if existing:
+            existing.user_id = request.user_id
+            existing.keys = request.keys
+            session.add(existing)
+        else:
+            new_sub = NotificationSubscription(
+                user_id=request.user_id,
+                endpoint=request.endpoint,
+                keys=request.keys
+            )
+            session.add(new_sub)
+        
+        session.commit()
+        return {"status": "success", "message": "Subscription saved"}
