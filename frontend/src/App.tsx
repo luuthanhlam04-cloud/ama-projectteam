@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CameraScanner from './components/CameraScanner';
 import ChatbotAI from './components/ChatbotAI';
 import MedicineCabinet from './components/MedicineCabinet';
 import { Menu, X, Sun, Moon, Home, Camera, Bot, Pill } from 'lucide-react'; 
+import InstallPWA from './components/InstallPWA';
+import { subscribeUserToPush } from './utils/pushSubscription';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -74,6 +76,8 @@ function App() {
           {activeTab === 'camera' && <CameraScanner isDarkMode={isDarkMode} />}
           {activeTab === 'ai' && <ChatbotAI isDarkMode={isDarkMode} />}
         </div>
+
+        <InstallPWA />
 
         {isMenuOpen && <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-40 animate-in fade-in duration-300" onClick={() => setIsMenuOpen(false)}></div>}
 
