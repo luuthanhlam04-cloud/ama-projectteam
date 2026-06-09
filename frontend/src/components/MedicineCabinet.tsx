@@ -110,7 +110,7 @@ export default function MedicineCabinet({ isDarkMode }: MedicineCabinetProps) {
                 <h3 className={`font-bold text-lg mb-2 pr-4 ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>{med.name}</h3>
                 <div className="flex flex-col gap-2">
                   <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Phân loại: <span className={`font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{med.type}</span></p>
-                  <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Trong kho: <span className={`font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{med.qty}</span></p>
+                  <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Hàm lượng: <span className={`font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{med.qty}</span></p>
                   <div className="self-start mt-1">
                     <span className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg font-medium ${
                       isDarkMode ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-emerald-600 bg-emerald-50 border border-emerald-200'
@@ -164,7 +164,7 @@ export default function MedicineCabinet({ isDarkMode }: MedicineCabinetProps) {
               </div>
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className={`text-xs mb-1 block ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Số lượng</label>
+                  <label className={`text-xs mb-1 block ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Hàm lượng</label>
                   <input type="text" value={newQty} onChange={(e) => setNewQty(e.target.value)} className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors ${isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400'}`} />
                 </div>
                 <div className="flex-1">
