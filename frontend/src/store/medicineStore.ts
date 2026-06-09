@@ -11,6 +11,7 @@ export interface Medicine {
   status: 'safe' | 'warning';
   medicine_id?: string;
   medicine_details?: any;
+  image_url?: string;
 }
 
 interface MedicineStore {
@@ -55,7 +56,8 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
         qty: med.qty,
         time: med.time,
         medicine_id: med.medicine_id || null,
-        medicine_details: med.medicine_details || {}
+        medicine_details: med.medicine_details || {},
+        image_url: med.image_url || null
       });
       if (response.data.status === 'success') {
         const newItem = response.data.item;
