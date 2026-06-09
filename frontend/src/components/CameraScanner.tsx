@@ -319,8 +319,8 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
   };
 
   return (
-    <div className={`flex flex-col h-full rounded-2xl overflow-hidden relative border shadow-inner transition-colors duration-300 ${
-      isDarkMode ? 'bg-slate-800 border-slate-600/50' : 'bg-white border-slate-200'
+    <div className={`flex flex-col h-full overflow-hidden relative transition-colors duration-300 ${
+      isDarkMode ? 'bg-slate-800' : 'bg-white'
     }`}>
       <input 
         type="file" 
@@ -368,7 +368,6 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
       {scanStatus === 'scanning' && (
         <>
           <div className="flex-1 bg-black flex flex-col items-center justify-center relative overflow-hidden">
-            {/* FIX LỖI: Thêm thuộc tính autoPlay, playsInline, muted */}
             <video 
               ref={videoRef} 
               autoPlay 
@@ -380,7 +379,6 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
             
             <div className="absolute inset-0 m-6 border-2 border-emerald-400/60 rounded-xl border-dashed animate-pulse z-20 pointer-events-none"></div>
             
-            {/* Nút chuyển đổi camera */}
             <button 
               onClick={toggleCamera}
               className="absolute top-4 right-4 z-30 w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
@@ -495,13 +493,14 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
               </div>
             ) : (
               <div className="space-y-4">
+                {/* Đã sửa rounded-lg thành rounded-none */}
                 <div>
                   <label className={`text-xs mb-1 block ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Tên thuốc</label>
                   <input 
                     type="text" 
                     value={ocrResult?.name || ''} 
                     onChange={(e) => setOcrResult({...ocrResult, name: e.target.value})}
-                    className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none ${
+                    className={`w-full border rounded-none px-3 py-2.5 text-sm focus:outline-none ${
                       isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 shadow-sm'
                     }`} 
                   />
@@ -512,7 +511,7 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
                     type="text" 
                     value={ocrResult?.generic_name || ''} 
                     onChange={(e) => setOcrResult({...ocrResult, generic_name: e.target.value})}
-                    className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none ${
+                    className={`w-full border rounded-none px-3 py-2.5 text-sm focus:outline-none ${
                       isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 shadow-sm'
                     }`} 
                   />
@@ -524,7 +523,7 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
                       type="text" 
                       value={ocrResult?.strength || ''} 
                       onChange={(e) => setOcrResult({...ocrResult, strength: e.target.value})}
-                      className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none ${
+                      className={`w-full border rounded-none px-3 py-2.5 text-sm focus:outline-none ${
                         isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 shadow-sm'
                       }`} 
                     />
@@ -535,7 +534,7 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
                       type="text" 
                       value={ocrResult?.category || ''} 
                       onChange={(e) => setOcrResult({...ocrResult, category: e.target.value})}
-                      className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none ${
+                      className={`w-full border rounded-none px-3 py-2.5 text-sm focus:outline-none ${
                         isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 shadow-sm'
                       }`} 
                     />
