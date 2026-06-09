@@ -70,7 +70,7 @@ async def chat_endpoint(
                 "type": "function",
                 "function": {
                     "name": "search_general_medicine",
-                    "description": "Tìm kiếm thông tin thuốc từ cơ sở dữ liệu tĩnh (CHỨA 50 LOẠI THUỐC CÓ SẴN ẢNH VÀ THÔNG TIN CHI TIẾT). GỌI HÀM NÀY MỌI LÚC khi tủ thuốc của người dùng bị trống để lấy dữ liệu đề xuất thuốc mua ngoài.",
+                    "description": "Tìm kiếm thông tin thuốc từ cơ sở dữ liệu tĩnh (CHỨA 50 LOẠI THUỐC CÓ SẴN ẢNH VÀ THÔNG TIN CHI TIẾT). Đây là nguồn duy nhất bạn được phép dùng để đề xuất thuốc mua ngoài cho người dùng. Bạn không được đề xuất bất kỳ loại thuốc nào khác ngoài danh sách trả về từ hàm này.",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -87,7 +87,7 @@ async def chat_endpoint(
                 "type": "function",
                 "function": {
                     "name": "get_my_cabinet",
-                    "description": "Lấy danh sách các loại thuốc đang có sẵn trong tủ thuốc cá nhân của người dùng. Gọi hàm này khi người dùng hỏi 'tôi đang có thuốc gì', 'trong tủ nhà tôi còn thuốc X không', hoặc 'có thuốc nào chữa bệnh Y trong tủ không'.",
+                    "description": "Lấy danh sách thuốc trong tủ cá nhân. **QUAN TRỌNG**: Nếu người dùng có yêu cầu đề xuất thuốc mua ngoài (ví dụ: 'nếu không có thì đề xuất'), bạn BẮT BUỘC phải gọi `search_general_medicine` SAU KHI hàm này trả về. Không được tự ý trả lời đề xuất nếu chưa gọi `search_general_medicine`.",
                     "parameters": {
                         "type": "object",
                         "properties": {},
@@ -116,11 +116,16 @@ async def chat_endpoint(
                     cabinet_data.append({
                         "name": item.name,
                         "type": item.type,
-                        "quantity": item.qty,
+                        "strength": item.qty,
                         "status": item.status,
                         "image_url": item.image_url,
                         "details": item.medicine_details
                     })
+                    if item.image_url:
+                        retrieved_images_list.append({
+                            "brand_name": item.name,
+                            "url": item.image_url
+                        })
                 return {"cabinet_inventory": cabinet_data}
 
         tool_handlers = {
@@ -136,14 +141,15 @@ KHI NGƯỜI DÙNG HỎI VỀ THUỐC HAY BỆNH, HÃY DÙNG TOOL PHÙ HỢP Đ�
 
 QUY TẮC TRẢ LỜI:
 1. **PHÁT HIỆN ĐỐI TƯỢNG NHẠY CẢM**: "mang thai", "trẻ em", "suy gan"... CẢNH BÁO AN TOÀN ĐẦU TIÊN!
-2. **LIỆT KÊ THUỐC**: Nếu họ hỏi thuốc trong tủ, chỉ khuyên dùng những thuốc mà tủ thuốc trả về. Nếu tủ có Paracetamol và phù hợp, hãy khuyên dùng. Sắp xếp: Paracetamol > thuốc không kê đơn > NSAID.
+2. **LIỆT KÊ THUỐC**: Khi người dùng hỏi 'trong tủ có thuốc trị bệnh X không?', KHÔNG ĐƯỢC liệt kê các loại thuốc trị bệnh khác đang có trong tủ (việc này sẽ làm sai lệch hình ảnh hiển thị). Chỉ trả lời Có/Không và chỉ liệt kê đúng thuốc chữa bệnh X (nếu có).
 3. **TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc (từ tủ thuốc hoặc đề xuất mua ngoài), NẾU thuốc đó có `image_url`, bạn PHẢI TỰ ĐỘNG đính kèm ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown: `![Tên thuốc](image_url)`. Tuyệt đối không tự chế ảnh nếu `image_url` không tồn tại.
 4. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
 5. **KHÔNG CÓ THUỐC TRONG TỦ**: Nếu tủ thuốc cá nhân không có thuốc phù hợp với bệnh lý của họ HOẶC trả về rỗng:
    - BẠN BẮT BUỘC PHẢI SỬ DỤNG TOOL `search_general_medicine` để tìm kiếm thông tin về bệnh lý và các loại thuốc điều trị tương ứng từ cơ sở dữ liệu y tế tĩnh.
    - Không được phép trả lời là "tôi không thể tìm thấy" mà chưa gọi tool `search_general_medicine`.
-   - Đề xuất MỘT SỐ loại thuốc nên mua ở ngoài (ưu tiên các thuốc mà tool trả về).
-   - Với mỗi thuốc đề xuất, trình bày rõ: **Tên thuốc**, **Công dụng**, **Thành phần chính**, và **Lý do đề xuất** phù hợp với triệu chứng của người dùng.
+   - TUYỆT ĐỐI CHỈ đề xuất các loại thuốc nằm trong danh sách kết quả được trả về trực tiếp bởi tool `search_general_medicine` (ví dụ: nếu tool trả về 'Gaviscon Dual Action', chỉ đề xuất đúng loại đó).
+   - NGHIÊM CẤM TỰ Ý ĐỀ XUẤT các thuốc từ kiến thức chung của bạn nếu chúng không có trong kết quả trả về của tool `search_general_medicine` (ví dụ: TUYỆT ĐỐI không đề xuất 'Ranitidine', 'Omeprazole', 'Gaviscon' thường nếu tool chỉ trả về 'Gaviscon Dual Action').
+   - Với mỗi thuốc đề xuất, trình bày rõ các thông tin dựa trên kết quả trả về của tool: **Tên thuốc** (phải viết chính xác tên/thương hiệu thuốc từ tool), **Công dụng**, **Thành phần chính**, và **Lý do đề xuất** phù hợp với triệu chứng của người dùng.
 """
         
         # 3. Gửi sang Gemini kèm theo history từ Redis và Tools
@@ -195,7 +201,12 @@ QUY TẮC TRẢ LỜI:
                     final_images.append(img)
         
         # Nếu bot nói không có thuốc phù hợp thì clear ảnh
-        if "hiện tại trong kho không có thuốc nào" in bot_reply_lower or "tủ thuốc cá nhân hiện đang trống" in bot_reply_lower:
+        if (
+            "trong kho không có" in bot_reply_lower or 
+            "tủ thuốc cá nhân hiện đang trống" in bot_reply_lower or
+            "không có thuốc phù hợp" in bot_reply_lower or
+            "không tìm thấy thuốc" in bot_reply_lower
+        ):
             final_images = []
         
         # 7. Lưu tin nhắn mới vào Redis (nếu Redis online)
