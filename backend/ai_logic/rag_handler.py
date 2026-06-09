@@ -117,7 +117,8 @@ class RAGHandler:
                     f"  Phân loại: {item.get('category')}\n"
                     f"  Chỉ định: {item.get('indications')}\n"
                     f"  Cách dùng: {item.get('usage_instruction')}\n"
-                    f"  Chống chỉ định: {item.get('contraindications')}"
+                    f"  Chống chỉ định: {item.get('contraindications')}\n"
+                    f"  image_url: {item.get('image_url', '')}"
                 )
                 if info not in context_chunks:
                     context_chunks.append(info)
@@ -137,7 +138,8 @@ class RAGHandler:
                             f"  Phân loại: {meta.get('category', '')}\n"
                             f"  Chỉ định: {meta.get('indications', '')}\n"
                             f"  Cách dùng: {meta.get('usage_instruction', '')}\n"
-                            f"  Chống chỉ định: {meta.get('contraindications', '')}"
+                            f"  Chống chỉ định: {meta.get('contraindications', '')}\n"
+                            f"  image_url: {meta.get('image_url', '')}"
                         )
                         context_chunks.append(info)
                         add_image(meta)

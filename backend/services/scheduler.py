@@ -68,6 +68,11 @@ async def check_and_send_reminders():
 def start_scheduler():
     if not scheduler.running:
         # Lên lịch quét mỗi 1 phút
-        scheduler.add_job(check_and_send_reminders, 'cron', minute='*')
+        scheduler.add_job(
+            check_and_send_reminders, 
+            'cron', 
+            minute='*', 
+            misfire_grace_time=60
+        )
         scheduler.start()
         print("APScheduler đã được khởi động.")

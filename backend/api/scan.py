@@ -1,5 +1,6 @@
 import os
 import traceback
+import asyncio
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from services.image_processing import preprocess_for_ocr
 from services.ocr_engine import process_medicine_ocr
@@ -21,17 +22,20 @@ async def scan_medicine(file: UploadFile = File(...)):
             content = await file.read()
             buffer.write(content)
         
-        processed_path = preprocess_for_ocr(temp_path)
+        # Chạy tiền xử lý ảnh OpenCV trên một luồng khác để không block Main Event Loop
+        processed_path = await asyncio.to_thread(preprocess_for_ocr, temp_path)
         result = await process_medicine_ocr(processed_path)
         
         # --- Tích hợp Upload Cloudinary (Xử lý ngoại lệ độc lập) ---
         image_url = None
         try:
-            # Tải ảnh gốc CÓ MÀU lên Cloudinary (thay vì ảnh đã qua tiền xử lý trắng đen)
-            upload_response = cloudinary.uploader.upload(
-                temp_path,
-                folder="p-innovation/medicines"
-            )
+            # Tải ảnh gốc CÓ MÀU lên Cloudinary (chạy trên thread để không block I/O)
+            def upload_to_cloudinary():
+                return cloudinary.uploader.upload(
+                    temp_path,
+                    folder="p-innovation/medicines"
+                )
+            upload_response = await asyncio.to_thread(upload_to_cloudinary)
             image_url = upload_response.get("secure_url")
         except Exception as upload_e:
             print("--- [WARNING: Cloudinary Upload Failed] ---")

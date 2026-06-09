@@ -87,7 +87,7 @@ async def chat_endpoint(
                 "type": "function",
                 "function": {
                     "name": "get_my_cabinet",
-                    "description": "Lấy danh sách thuốc trong tủ cá nhân. **QUAN TRỌNG**: Nếu người dùng có yêu cầu đề xuất thuốc mua ngoài (ví dụ: 'nếu không có thì đề xuất'), bạn BẮT BUỘC phải gọi `search_general_medicine` SAU KHI hàm này trả về. Không được tự ý trả lời đề xuất nếu chưa gọi `search_general_medicine`.",
+                    "description": "Lấy danh sách thuốc trong tủ cá nhân. **QUAN TRỌNG**: Sau khi kiểm tra tủ thuốc, nếu KHÔNG CÓ thuốc phù hợp với bệnh lý/triệu chứng của người dùng, bạn BẮT BUỘC phải tự động gọi tiếp `search_general_medicine` để tìm và đề xuất thuốc mua ngoài (kể cả khi người dùng không yêu cầu).",
                     "parameters": {
                         "type": "object",
                         "properties": {},
@@ -100,7 +100,9 @@ async def chat_endpoint(
         # --- HÀM XỬ LÝ (HANDLERS) ---
         async def handle_search_general(query: str):
             nonlocal retrieved_images_list
-            context, images = rag_handler.query_vector_db(query)
+            # Chạy vector search trên thread riêng để không block Main Event Loop
+            import asyncio
+            context, images = await asyncio.to_thread(rag_handler.query_vector_db, query)
             retrieved_images_list.extend(images)
             return {"medicine_data_found": context}
 
@@ -145,8 +147,8 @@ QUY TẮC TRẢ LỜI:
 3. **TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc (từ tủ thuốc hoặc đề xuất mua ngoài), NẾU thuốc đó có `image_url`, bạn PHẢI TỰ ĐỘNG đính kèm ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown: `![Tên thuốc](image_url)`. Tuyệt đối không tự chế ảnh nếu `image_url` không tồn tại.
 4. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
 5. **KHÔNG CÓ THUỐC TRONG TỦ**: Nếu tủ thuốc cá nhân không có thuốc phù hợp với bệnh lý của họ HOẶC trả về rỗng:
-   - BẠN BẮT BUỘC PHẢI SỬ DỤNG TOOL `search_general_medicine` để tìm kiếm thông tin về bệnh lý và các loại thuốc điều trị tương ứng từ cơ sở dữ liệu y tế tĩnh.
-   - Không được phép trả lời là "tôi không thể tìm thấy" mà chưa gọi tool `search_general_medicine`.
+   - Kể cả khi người dùng không yêu cầu đề xuất, BẠN BẮT BUỘC PHẢI TỰ ĐỘNG GỌI TOOL `search_general_medicine` để tìm thông tin về bệnh lý và đề xuất thuốc từ cơ sở dữ liệu y tế.
+   - Tuyệt đối không được phép trả lời là "tủ thuốc không có" rồi dừng lại mà không gọi tool `search_general_medicine`.
    - TUYỆT ĐỐI CHỈ đề xuất các loại thuốc nằm trong danh sách kết quả được trả về trực tiếp bởi tool `search_general_medicine` (ví dụ: nếu tool trả về 'Gaviscon Dual Action', chỉ đề xuất đúng loại đó).
    - NGHIÊM CẤM TỰ Ý ĐỀ XUẤT các thuốc từ kiến thức chung của bạn nếu chúng không có trong kết quả trả về của tool `search_general_medicine` (ví dụ: TUYỆT ĐỐI không đề xuất 'Ranitidine', 'Omeprazole', 'Gaviscon' thường nếu tool chỉ trả về 'Gaviscon Dual Action').
    - Với mỗi thuốc đề xuất, trình bày rõ các thông tin dựa trên kết quả trả về của tool: **Tên thuốc** (phải viết chính xác tên/thương hiệu thuốc từ tool), **Công dụng**, **Thành phần chính**, và **Lý do đề xuất** phù hợp với triệu chứng của người dùng.
@@ -200,14 +202,8 @@ QUY TẮC TRẢ LỜI:
                 if brand_name not in [i["brand_name"] for i in final_images]:
                     final_images.append(img)
         
-        # Nếu bot nói không có thuốc phù hợp thì clear ảnh
-        if (
-            "trong kho không có" in bot_reply_lower or 
-            "tủ thuốc cá nhân hiện đang trống" in bot_reply_lower or
-            "không có thuốc phù hợp" in bot_reply_lower or
-            "không tìm thấy thuốc" in bot_reply_lower
-        ):
-            final_images = []
+        # Đã loại bỏ logic xóa `final_images` khi bot nói "không có thuốc phù hợp", 
+        # vì nó vô tình xóa luôn ảnh của thuốc được đề xuất mua ngoài từ search_general_medicine.
         
         # 7. Lưu tin nhắn mới vào Redis (nếu Redis online)
         await redis_service.save_message(session_uuid, "user", query_text)
