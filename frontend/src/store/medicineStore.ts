@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import { create } from 'zustand';
 import axios from 'axios';
 
@@ -35,7 +36,7 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
   fetchMedicines: async (userId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get(`http://localhost:8000/api/inventory/?user_id=${userId}`);
+      const response = await axios.get(`${API_BASE_URL}/api/inventory/?user_id=${userId}`);
       set({ medicines: response.data.items, isLoading: false });
     } catch (err: any) {
       console.error("Lỗi tải danh sách tủ thuốc:", err);
@@ -52,7 +53,7 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
   
   addMedicine: async (med) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/inventory/add', {
+      const response = await axios.post(`${API_BASE_URL}/api/inventory/add`, {
         user_id: 'demo_user_2026',
         name: med.name,
         type: med.type,
@@ -94,7 +95,7 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
   
   updateMedicine: async (id, updates) => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/inventory/${id}`, updates);
+      const response = await axios.put(`${API_BASE_URL}/api/inventory/${id}`, updates);
       if (response.data.status === 'success') {
         set((state) => ({
           medicines: state.medicines.map(m => m.id === id ? { ...m, ...updates } : m)
@@ -111,7 +112,7 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
   
   deleteMedicine: async (itemId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/inventory/${itemId}`);
+      await axios.delete(`${API_BASE_URL}/api/inventory/${itemId}`);
       set((state) => ({
         medicines: state.medicines.filter((m) => m.id !== itemId)
       }));

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Camera, X, Image as ImageIcon, Send, RefreshCw, Layers3, Scan, SwitchCamera } from 'lucide-react';
@@ -212,7 +213,7 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
       const formData = new FormData();
       formData.append("file", fileToSend);
 
-      const response = await axios.post("http://localhost:8000/api/scan/", formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/scan/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -291,7 +292,7 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
         const formData = new FormData();
         formData.append("file", fileToSend);
 
-        const response = await axios.post("http://localhost:8000/api/scan/", formData, {
+        const response = await axios.post(`${API_BASE_URL}/api/scan/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

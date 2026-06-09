@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import axios from 'axios';
 
 // Public VAPID key sinh ra từ Backend
@@ -42,7 +43,7 @@ export async function subscribeUserToPush() {
     }
 
     // Gửi subscription lên server
-    await axios.post('http://localhost:8000/api/inventory/push/subscribe', {
+    await axios.post(`${API_BASE_URL}/api/inventory/push/subscribe`, {
       user_id: 'demo_user_2026',
       endpoint: subscription.endpoint,
       keys: {

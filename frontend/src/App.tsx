@@ -89,12 +89,8 @@ function App() {
           )}
         </div>
 
-<<<<<<< HEAD
-        {/* MENU */}
-=======
         <InstallPWA />
-
->>>>>>> ef8253046837a096662e15f67f9893bed4702357
+        {/* MENU */}
         {isMenuOpen && <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-40 animate-in fade-in duration-300" onClick={() => setIsMenuOpen(false)}></div>}
 
         <div className={`absolute top-0 left-0 h-full w-[260px] z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0 shadow-[10px_0_40px_rgba(0,0,0,0.1)]' : '-translate-x-full shadow-none'} ${isDarkMode ? 'bg-slate-800 border-r border-slate-700/50' : 'bg-white border-r border-slate-100'}`}>

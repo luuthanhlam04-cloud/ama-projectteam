@@ -1,19 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, User, AlertTriangle } from 'lucide-react';
+import { Send, User, AlertTriangle, Bot, Volume2 } from 'lucide-react';
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:8000";
+import { API_BASE_URL } from "../config";
+const BASE_URL = API_BASE_URL;
 const AVATAR_URL = `${BASE_URL}/images/avatar.png`;
 const BG_URL = `${BASE_URL}/images/bg.png`;
 
 interface Message {
   sender: 'ai' | 'user';
   text: string;
-<<<<<<< HEAD
-=======
   images?: any[];
   audioUrl?: string;
->>>>>>> ef8253046837a096662e15f67f9893bed4702357
 }
 
 interface ChatbotAIProps {
@@ -28,75 +26,6 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-<<<<<<< HEAD
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleSendMessage = async () => {
-    if (!inputText.trim() || isLoading) return;
-    const userQuery = inputText;
-    setMessages(prev => [...prev, { sender: 'user', text: userQuery }]);
-    setInputText('');
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post(`${BASE_URL}/api/chat`, { text: userQuery }, { withCredentials: true });
-      setMessages(prev => [...prev, { sender: 'ai', text: response.data.bot_reply }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { sender: 'ai', text: 'Hệ thống đang bảo trì.' }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    // THAY ĐỔI: Thêm nền cố định vào đây để lót dưới cùng, che mọi hở viền
-    <div className={`flex flex-col h-full w-full relative ${isDarkMode ? 'bg-slate-900' : 'bg-white'}`}>
-      
-      {/* ẢNH NỀN MỜ (Z-INDEX thấp nhất) */}
-      <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: `url('${BG_URL}')`, filter: 'blur(10px)' }} />
-      <div className={`absolute inset-0 z-0 ${isDarkMode ? 'bg-slate-900/80' : 'bg-white/80'}`} />
-
-      {/* CẢNH BÁO */}
-      <div className={`border-b p-2 flex items-center justify-center gap-2 relative z-10 ${
-        isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-100 border-slate-200'
-      }`}>
-        <AlertTriangle size={14} className="text-red-500" />
-        <span className="text-[10px] font-bold text-red-500 uppercase">AI chỉ tư vấn tham khảo, không thay thế bác sĩ</span>
-      </div>
-
-      {/* VÙNG CHAT */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 relative z-10">
-        {messages.map((msg, index) => (
-          <div key={index} className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-700 border border-slate-600">
-              {msg.sender === 'ai' && <img src={AVATAR_URL} className="w-full h-full object-cover" />}
-            </div>
-            <div className={`p-3 text-sm max-w-[80%] ${
-              msg.sender === 'user' ? 'bg-emerald-600 text-white' : (isDarkMode ? 'bg-slate-800 text-white' : 'bg-white text-slate-800')
-            }`}>
-              {msg.text}
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* THANH CHAT - Gắn sát đáy, không để hở */}
-      <div className={`p-4 border-t relative z-20 flex items-center gap-2 ${
-        isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
-      }`}>
-        <input 
-          value={inputText} 
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-          className={`flex-1 px-4 py-3 text-sm focus:outline-none ${isDarkMode ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-800'}`}
-          placeholder="Nhập triệu chứng..."
-        />
-        <button onClick={handleSendMessage} className="p-3 bg-emerald-500 text-white">
-          <Send size={18} />
-=======
   const currentInventory = [
     { name: "Panadol Extra", quantity: 10, expiry: "12/2026" }
   ];
@@ -120,7 +49,7 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
         headers['X-Session-ID'] = storedSessionId;
       }
 
-      const response = await axios.post('http://localhost:8000/api/chat', {
+      const response = await axios.post(`${API_BASE_URL}/api/chat`, {
         text: userQuery,
         inventory: currentInventory,
         history: [] // Backend bây giờ tự quản lý lịch sử thông qua Redis
@@ -146,7 +75,7 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
       setMessages(prev => [...prev, newAiMessage]);
 
       if (data.audio_url) {
-        const audio = new Audio(`http://localhost:8000${data.audio_url}`);
+        const audio = new Audio(`${API_BASE_URL}${data.audio_url}`);
         audio.play().catch(e => console.log("Trình duyệt chặn autoplay audio:", e));
       }
 
@@ -171,7 +100,7 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
           headers['X-Session-ID'] = storedSessionId;
         }
 
-        await axios.post('http://localhost:8000/api/chat/clear-session', {}, {
+        await axios.post(`${API_BASE_URL}/api/chat/clear-session`, {}, {
           headers,
           withCredentials: true
         });
@@ -197,9 +126,15 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
     // Đã thay đổi rounded-2xl thành rounded-none ở đây để làm thẳng góc toàn bộ chatbot
     <div className={`flex flex-col h-full rounded-none border overflow-hidden relative transition-colors duration-300 ${isDarkMode ? 'bg-slate-800/50 border-slate-600/50' : 'bg-white border-slate-200'
       }`}>
+      {/* ẢNH NỀN SẮC NÉT (Z-INDEX thấp nhất) */}
+      <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: `url('${BG_URL}')` }} />
+      <div className={`absolute inset-0 z-0 ${isDarkMode ? 'bg-slate-900/40' : 'bg-white/40'}`} />
+      
+      {/* Bọc nội dung thực sự vào thẻ z-10 để nổi lên trên nền */}
+      <div className="flex flex-col h-full w-full relative z-10">
 
       {/* CẢNH BÁO Y TẾ */}
-      <div className={`border-b p-2 flex items-center justify-center gap-2 shrink-0 ${isDarkMode ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50 border-red-200'
+      <div className={`border-b p-2 flex items-center justify-center gap-2 shrink-0 backdrop-blur-md ${isDarkMode ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50/80 border-red-200'
         }`}>
         <AlertTriangle size={14} className={isDarkMode ? 'text-red-400' : 'text-red-500'} />
         <span className={`text-[10px] font-medium uppercase tracking-wider ${isDarkMode ? 'text-red-300' : 'text-red-600'
@@ -209,7 +144,7 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
       </div>
 
       {/* THANH ĐẦU ĐỀ CHATBOT VỚI NÚT XÓA LỊCH SỬ */}
-      <div className={`px-4 py-2 border-b flex items-center justify-between shrink-0 ${isDarkMode ? 'bg-slate-800/80 border-slate-700/50' : 'bg-slate-50 border-slate-200'
+      <div className={`px-4 py-2 border-b flex items-center justify-between shrink-0 backdrop-blur-md ${isDarkMode ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/80 border-slate-200'
         }`}>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
@@ -231,17 +166,17 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
       <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
         {messages.map((msg, index) => (
           <div key={index} className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.sender === 'user'
+            <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shrink-0 ${msg.sender === 'user'
               ? 'bg-emerald-500'
-              : (isDarkMode ? 'bg-slate-700' : 'bg-slate-200')
+              : 'bg-slate-700 border border-slate-600'
               }`}>
-              {msg.sender === 'user' ? <User size={16} className="text-white" /> : <Bot size={16} className="text-emerald-500" />}
+              {msg.sender === 'user' ? <User size={16} className="text-white" /> : <img src={AVATAR_URL} className="w-full h-full object-cover" />}
             </div>
 
             <div className={`flex flex-col gap-2 max-w-[80%]`}>
-              <div className={`p-3 rounded-2xl text-sm whitespace-pre-wrap ${msg.sender === 'user'
-                ? (isDarkMode ? 'bg-emerald-500/20 text-emerald-100 border border-emerald-500/30 rounded-tr-none' : 'bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-tr-none')
-                : (isDarkMode ? 'bg-slate-700/50 text-slate-200 border border-slate-600/50 rounded-tl-none' : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none')
+              <div className={`p-3 rounded-2xl text-sm whitespace-pre-wrap backdrop-blur-md ${msg.sender === 'user'
+                ? (isDarkMode ? 'bg-emerald-500/30 text-emerald-100 border border-emerald-500/30 rounded-tr-none' : 'bg-emerald-100/80 text-emerald-800 border border-emerald-300 rounded-tr-none')
+                : (isDarkMode ? 'bg-slate-800/60 text-slate-200 border border-slate-600/50 rounded-tl-none' : 'bg-white/80 text-slate-800 border border-slate-200 rounded-tl-none')
                 }`}>
                 {msg.sender === 'user' ? msg.text : (
                   // Parser đơn giản để biến markdown ![alt](url) thành ảnh và **text** thành in đậm
@@ -273,7 +208,7 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
 
                 {msg.audioUrl && (
                   <button
-                    onClick={() => new Audio(`http://localhost:8000${msg.audioUrl}`).play()}
+                    onClick={() => new Audio(`${API_BASE_URL}${msg.audioUrl}`).play()}
                     className={`mt-2 p-1.5 rounded-full inline-flex items-center gap-1 text-[10px] transition-colors ${isDarkMode ? 'text-emerald-400 hover:text-emerald-300 bg-slate-800/50' : 'text-emerald-600 hover:text-emerald-700 bg-white shadow-sm'
                       }`}
                   >
@@ -289,7 +224,7 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
                       }`}>
                       {img.url ? (
                         <img
-                          src={img.url.startsWith('http') ? img.url : `http://localhost:8000${img.url}`}
+                          src={img.url.startsWith('http') ? img.url : `${API_BASE_URL}${img.url}`}
                           alt={img.brand_name}
                           className="w-16 h-16 object-cover rounded-lg bg-white"
                         />
@@ -309,10 +244,10 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
 
         {isLoading && (
           <div className="flex gap-3 flex-row items-center">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`}>
-              <Bot size={16} className="text-emerald-500" />
+            <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shrink-0 ${isDarkMode ? 'bg-slate-700 border border-slate-600' : 'bg-slate-200 border border-slate-300'}`}>
+              <img src={AVATAR_URL} className="w-full h-full object-cover" />
             </div>
-            <div className={`flex gap-2 p-3 rounded-2xl border items-center ${isDarkMode ? 'bg-slate-700/50 border-slate-600/50' : 'bg-slate-100 border-slate-200'
+            <div className={`flex gap-2 p-3 rounded-2xl border items-center backdrop-blur-md ${isDarkMode ? 'bg-slate-800/60 border-slate-600/50' : 'bg-white/80 border-slate-200'
               }`}>
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce"></span>
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
@@ -324,7 +259,7 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
       </div>
 
       {/* 3. THANH NHẬP CHỮ DƯỚI CÙNG */}
-      <div className={`p-3 border-t flex items-center gap-2 shrink-0 transition-colors ${isDarkMode ? 'border-slate-700/50 bg-slate-800' : 'border-slate-200 bg-slate-50'
+      <div className={`p-3 border-t flex items-center gap-2 shrink-0 backdrop-blur-md transition-colors ${isDarkMode ? 'border-slate-700/50 bg-slate-800/60' : 'border-slate-200 bg-white/80'
         }`}>
         <input
           type="text"
@@ -333,9 +268,9 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
           placeholder="Hỏi về triệu chứng của bạn..."
           disabled={isLoading}
-          className={`flex-1 border rounded-full px-4 py-2.5 text-sm focus:outline-none disabled:opacity-50 transition-colors ${isDarkMode
-            ? 'bg-slate-900 border-slate-700 text-slate-200 focus:border-emerald-500/50'
-            : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 placeholder:text-slate-400'
+          className={`flex-1 border rounded-full px-4 py-2.5 text-sm focus:outline-none disabled:opacity-50 backdrop-blur-sm transition-colors ${isDarkMode
+            ? 'bg-slate-900/50 border-slate-700 text-slate-200 focus:border-emerald-500/50'
+            : 'bg-white/50 border-slate-300 text-slate-800 focus:border-emerald-400 placeholder:text-slate-400'
             }`}
         />
         <button
@@ -344,8 +279,8 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
           className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all disabled:opacity-50 disabled:bg-slate-300 bg-emerald-500 hover:bg-emerald-400"
         >
           <Send size={18} className="text-white ml-1" />
->>>>>>> ef8253046837a096662e15f67f9893bed4702357
         </button>
+      </div>
       </div>
     </div>
   );

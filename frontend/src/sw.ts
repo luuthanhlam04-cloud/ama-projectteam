@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "./config";
 /// <reference lib="webworker" />
 declare let self: ServiceWorkerGlobalScope;
 
@@ -49,7 +50,7 @@ self.addEventListener('notificationclick', (event) => {
   if (event.action === 'consume') {
     // Gọi API trừ tồn kho
     event.waitUntil(
-      fetch('http://localhost:8000/api/inventory/consume', {
+      fetch(`${API_BASE_URL}/api/inventory/consume`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
