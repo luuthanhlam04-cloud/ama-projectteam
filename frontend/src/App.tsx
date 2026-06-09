@@ -68,13 +68,26 @@ function App() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-hidden flex flex-col relative z-10">
+        {/* CONTAINER CHỨA NỘI DUNG (ĐÃ FIX ÉP FLEX-1 XUỐNG TẬN ĐÁY) */}
+        <div className="flex-1 overflow-hidden flex flex-col relative z-10 w-full h-full">
           {activeTab === 'home' && <HomeDashboard />}
-          {activeTab === 'cabinet' && <MedicineCabinet isDarkMode={isDarkMode} />}
-          {activeTab === 'camera' && <CameraScanner isDarkMode={isDarkMode} />}
-          {activeTab === 'ai' && <ChatbotAI isDarkMode={isDarkMode} />}
+          
+          {/* Bọc các component khác trong flex-1 để đảm bảo chúng giãn kín không gian, 
+              không bị treo lơ lửng gây ra khoảng trống ở viền mờ phía dưới */}
+          {activeTab === 'cabinet' && (
+            <div className="flex-1 flex flex-col w-full h-full"><MedicineCabinet isDarkMode={isDarkMode} /></div>
+          )}
+          
+          {activeTab === 'camera' && (
+            <div className="flex-1 flex flex-col w-full h-full"><CameraScanner isDarkMode={isDarkMode} /></div>
+          )}
+          
+          {activeTab === 'ai' && (
+            <div className="flex-1 flex flex-col w-full h-full"><ChatbotAI isDarkMode={isDarkMode} /></div>
+          )}
         </div>
 
+        {/* MENU */}
         {isMenuOpen && <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-40 animate-in fade-in duration-300" onClick={() => setIsMenuOpen(false)}></div>}
 
         <div className={`absolute top-0 left-0 h-full w-[260px] z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0 shadow-[10px_0_40px_rgba(0,0,0,0.1)]' : '-translate-x-full shadow-none'} ${isDarkMode ? 'bg-slate-800 border-r border-slate-700/50' : 'bg-white border-r border-slate-100'}`}>
