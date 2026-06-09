@@ -36,12 +36,17 @@ async def call_openrouter_vision(image_path: str):
     
     # Ép buộc mô hình trả về cấu trúc JSON thuần túy
     system_prompt = """Identify the medicine from the image. Return ONLY a raw JSON object with no markdown formatting. The JSON must contain the exact following keys:
-"brand_name" (string), "generic_name" (string), "category" (string), "dosage_form" (string), "strength" (string), "indications" (string), "contraindications" (string), "side_effects" (string), "usage_instruction" (string), "storage" (string), "search_keywords" (array of strings).
-If any information is unknown, assign the value "N/A".
+"brand_name" (string), "generic_name" (string), "category" (string), "dosage_form" (string), "strength" (string), "indications" (string), "contraindications" (string), "side_effects" (string), "usage_instruction" (string), "storage" (string), "search_keywords" (array of strings), "qty" (integer), "unit" (string).
+If any information is unknown, assign the value "N/A" (or 0 for qty).
+IMPORTANT INSTRUCTIONS FOR INVENTORY (qty and unit):
+1. You MUST analyze the packaging structure (e.g., "Hộp 2 vỉ x 10 viên" -> qty: 20, unit: "viên"). 
+2. Calculate the total quantity in the smallest consumable unit (viên, gói, ml, tuýp). 
+3. DO NOT return intermediate units like "hộp" or "vỉ".
+4. If the image is blurry or lacks total quantity info, return qty as 0.
 IMPORTANT LANGUAGE INSTRUCTIONS:
-1. The "category" field MUST be written in Vietnamese (e.g., Thuốc giảm đau, Kháng sinh, Thuốc trị cảm cúm...).
+1. The "category" field MUST be written in Vietnamese.
 2. The "indications", "contraindications", "side_effects", "usage_instruction", and "storage" fields MUST be in Vietnamese.
-3. DO NOT translate "brand_name", "generic_name", "dosage_form", and "strength". Keep them in their original international medical terminology (English)."""
+3. DO NOT translate "brand_name", "generic_name", "dosage_form", and "strength". Keep them in English."""
 
     async with httpx.AsyncClient() as client:
         try:
@@ -135,6 +140,8 @@ async def process_medicine_ocr(image_path: str):
                     "storage": getattr(best_match, "storage", "N/A"),
                     "confidence": round(highest_score, 2),
                     "method": "local_fuzzy_optimized",
+                    "qty": 0,
+                    "unit": "viên",
                     "image_url": getattr(best_match, "image_url", f"/static/medicine_assets/{best_match.id}.png")
                 }
 
@@ -160,6 +167,8 @@ async def process_medicine_ocr(image_path: str):
         "usage_instruction": cloud_data.get("usage_instruction", "N/A"),
         "storage": cloud_data.get("storage", "N/A"),
         "search_keywords": cloud_data.get("search_keywords", []),
+        "qty": cloud_data.get("qty", 0),
+        "unit": cloud_data.get("unit", "viên"),
         "image_url": None,
         "method": "cloud",
         "confidence": 100

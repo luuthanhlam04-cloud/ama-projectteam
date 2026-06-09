@@ -146,7 +146,7 @@ class RAGHandler:
         
         # Nếu không tìm thấy gì
         if not context_chunks:
-            return "Hiện tại trong kho không có thuốc nào phù hợp với yêu cầu.", []
+            return "Không tìm thấy thông tin thuốc phù hợp trong cơ sở dữ liệu y tế.", []
         
         # Giới hạn số lượng context trả về
         return "\n\n".join(context_chunks[:top_k]), matched_images

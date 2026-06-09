@@ -1,20 +1,29 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
+from services.scheduler import start_scheduler
+from scripts.setup_db_standalone import load_postgres
 
-# Sửa cú pháp import router theo chuẩn FastAPI để không lỗi cho cả bạn và đồng đội
-from api.scan import router as scan_router
-from api.chat import router as chat_router
-from api.inventory import router as inventory_router
-from api.auth import router as auth_router
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Tự động khởi tạo DB và dữ liệu tĩnh (nếu chưa có)
+    print("Initializing Database...")
+    load_postgres()
+    
+    start_scheduler()
+    yield
+    
+app = FastAPI(title="AMA Ultimate System API", version="1.0.0", lifespan=lifespan)
 
-app = FastAPI(title="AMA Ultimate System API", version="1.0.0")
-
-# 1. Cấu hình CORS - Giữ nguyên thiết lập bảo mật cổng 3000 của bạn
+# 1. Cấu hình CORS - Đã cập nhật cổng 5173 và 3000
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:5173", "*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,6 +47,11 @@ app.mount("/static", StaticFiles(directory=static_path), name="static")
 app.mount("/images", StaticFiles(directory=medicine_assets_path), name="images")
 
 # 3. Kết nối các nhánh logic (Routers) - Hệ thống hóa Prefix
+from api.scan import router as scan_router
+from api.chat import router as chat_router
+from api.inventory import router as inventory_router
+from api.auth import router as auth_router
+
 app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
 app.include_router(scan_router, prefix="/api/scan", tags=["OCR"])
 app.include_router(chat_router, prefix="/api/chat", tags=["AI Chat"])

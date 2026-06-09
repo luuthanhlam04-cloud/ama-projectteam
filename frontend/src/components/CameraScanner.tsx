@@ -256,8 +256,10 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
     addMedicine({
       name: ocrResult.name,
       type: ocrResult.category || ocrResult.generic_name || 'Chưa phân loại',
-      qty: ocrResult.strength || '1', 
-      time: 'Chưa cài đặt',
+      qty: parseInt(ocrResult.qty) || 0,
+      unit: ocrResult.unit || 'viên',
+      dosage: 1,
+      time: '',
       status: 'safe',
       medicine_id: ocrResult.id || null,
       medicine_details: ocrResult,
@@ -519,14 +521,24 @@ export default function CameraScanner({ isDarkMode }: CameraScannerProps) {
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <label className={`text-xs mb-1 block ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Số lượng / Hàm lượng</label>
-                    <input 
-                      type="text" 
-                      value={ocrResult?.strength || ''} 
-                      onChange={(e) => setOcrResult({...ocrResult, strength: e.target.value})}
-                      className={`w-full border rounded-none px-3 py-2.5 text-sm focus:outline-none ${
-                        isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 shadow-sm'
-                      }`} 
-                    />
+                    <div className="flex gap-2">
+                      <input 
+                        type="number" 
+                        value={ocrResult?.qty || ''} 
+                        onChange={(e) => setOcrResult({...ocrResult, qty: parseInt(e.target.value) || 0})}
+                        className={`w-2/3 border rounded-none px-3 py-2.5 text-sm focus:outline-none ${
+                          isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 shadow-sm'
+                        }`} 
+                      />
+                      <input 
+                        type="text" 
+                        value={ocrResult?.unit || ''} 
+                        onChange={(e) => setOcrResult({...ocrResult, unit: e.target.value})}
+                        className={`w-1/3 border rounded-none px-3 py-2.5 text-sm focus:outline-none text-center ${
+                          isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-200 focus:border-emerald-500/50' : 'bg-white border-slate-300 text-slate-800 focus:border-emerald-400 shadow-sm'
+                        }`} 
+                      />
+                    </div>
                   </div>
                   <div className="flex-1">
                     <label className={`text-xs mb-1 block ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Phân loại</label>

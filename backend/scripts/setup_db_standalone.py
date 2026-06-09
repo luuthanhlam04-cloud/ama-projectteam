@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from sqlmodel import SQLModel, create_engine, Session
-from models import Medicine, User, ConsumptionHistory, UserInventory
+from models import *
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://ama_admin:ama_password@localhost:5433/ama_db")
 engine = create_engine(DATABASE_URL, echo=False)

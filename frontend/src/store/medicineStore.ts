@@ -6,11 +6,14 @@ export interface Medicine {
   id: string;
   name: string;
   type: string;
-  qty: string;
+  qty: number;
+  unit: string;
+  dosage: number;
   time: string;
   status: 'safe' | 'warning';
   medicine_id?: string;
   medicine_details?: any;
+  image_url?: string;
 }
 
 interface MedicineStore {
@@ -19,6 +22,7 @@ interface MedicineStore {
   error: string | null;
   fetchMedicines: (userId: string) => Promise<void>;
   addMedicine: (med: any) => Promise<void>;
+  updateMedicine: (id: string, updates: any) => Promise<void>;
   deleteMedicine: (itemId: string) => Promise<void>;
 }
 
@@ -40,7 +44,7 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
         isLoading: false,
         // Dữ liệu mẫu hiển thị làm dự phòng
         medicines: [
-          { id: '1', name: 'Paracetamol 500mg', type: 'Giảm đau, hạ sốt', qty: '12 viên', time: 'Sau ăn 30 phút', status: 'safe' },
+          { id: '1', name: 'Paracetamol 500mg', type: 'Giảm đau, hạ sốt', qty: 12, unit: 'viên', dosage: 1, time: '', status: 'safe' },
         ]
       });
     }
@@ -53,9 +57,12 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
         name: med.name,
         type: med.type,
         qty: med.qty,
-        time: med.time,
+        unit: med.unit || 'viên',
+        dosage: med.dosage || 1,
+        time: med.time || '',
         medicine_id: med.medicine_id || null,
-        medicine_details: med.medicine_details || {}
+        medicine_details: med.medicine_details || {},
+        image_url: med.image_url || null
       });
       if (response.data.status === 'success') {
         const newItem = response.data.item;
@@ -71,13 +78,33 @@ export const useMedicineStore = create<MedicineStore>((set) => ({
         name: med.name,
         type: med.type,
         qty: med.qty,
-        time: med.time,
+        unit: med.unit || 'viên',
+        dosage: med.dosage || 1,
+        time: med.time || '',
         status: med.status || 'safe',
         medicine_id: med.medicine_id,
-        medicine_details: med.medicine_details
+        medicine_details: med.medicine_details,
+        image_url: med.image_url
       };
       set((state) => ({
         medicines: [fallbackItem, ...state.medicines]
+      }));
+    }
+  },
+  
+  updateMedicine: async (id, updates) => {
+    try {
+      const response = await axios.put(`http://localhost:8000/api/inventory/${id}`, updates);
+      if (response.data.status === 'success') {
+        set((state) => ({
+          medicines: state.medicines.map(m => m.id === id ? { ...m, ...updates } : m)
+        }));
+      }
+    } catch (err) {
+      console.error("Lỗi khi cập nhật thuốc:", err);
+      // Fallback
+      set((state) => ({
+        medicines: state.medicines.map(m => m.id === id ? { ...m, ...updates } : m)
       }));
     }
   },
