@@ -80,18 +80,41 @@ self.addEventListener('notificationclick', (event) => {
       })
     );
   } else {
-    // Mở app nếu bấm vào thân thông báo (không qua nút)
+    // Mở app và TỰ ĐỘNG TRỪ TỒN KHO nếu bấm vào thân thông báo (Vì iOS không hiển thị nút action)
     event.waitUntil(
-      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-        if (clientList.length > 0) {
-          let client = clientList[0];
-          for (let i = 0; i < clientList.length; i++) {
-            if (clientList[i].focused) {
-              client = clientList[i];
-            }
-          }
-          return client.focus();
+      fetch(`${API_BASE_URL}/api/inventory/consume`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          medicine_id: payloadData.medicine_id,
+          dosage: payloadData.dosage,
+          user_id: payloadData.user_id
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.warning) {
+          self.registration.showNotification('Cảnh báo tồn kho', {
+            body: data.warning,
+            icon: '/icon-192x192.png'
+          });
         }
+        // Sau khi trừ xong thì mở app
+        return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+          if (clientList.length > 0) {
+            let client = clientList[0];
+            for (let i = 0; i < clientList.length; i++) {
+              if (clientList[i].focused) {
+                client = clientList[i];
+              }
+            }
+            return client.focus();
+          }
+          return self.clients.openWindow('/');
+        });
+      })
+      .catch(err => {
+        console.error('Consume error:', err);
         return self.clients.openWindow('/');
       })
     );

@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
   plugins: [
+    basicSsl(),
     react(),
     VitePWA({
       strategies: 'injectManifest',
@@ -44,6 +46,11 @@ export default defineConfig({
     strictPort: true,
     watch: {
       usePolling: true, // Bắt buộc cho môi trường Docker/WSL2 để tự động cập nhật UI khi sửa code
+    },
+    proxy: {
+      '/api': 'http://backend:8000',
+      '/static': 'http://backend:8000',
+      '/images': 'http://backend:8000'
     }
   }
 })

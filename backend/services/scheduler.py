@@ -41,13 +41,13 @@ async def check_and_send_reminders():
             if current_time_str in item.time:
                 # Tìm endpoint của user này
                 sub_stmt = select(NotificationSubscription).where(NotificationSubscription.user_id == item.user_id)
-                subscription = session.exec(sub_stmt).first()
+                subscriptions = session.exec(sub_stmt).all()
                 
-                if subscription:
+                for subscription in subscriptions:
                     # Chuẩn bị payload thông báo
                     payload = {
                         "title": f"Đến giờ uống thuốc: {item.name}",
-                        "body": f"Liều lượng: {item.dosage} {item.unit}. Bấm 'Rồi' để trừ tồn kho.",
+                        "body": f"Liều lượng: {item.dosage} {item.unit}. Chạm vào thông báo này để xác nhận ĐÃ UỐNG.",
                         "data": {
                             "medicine_id": str(item.id),
                             "dosage": item.dosage,

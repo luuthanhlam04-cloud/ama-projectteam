@@ -183,12 +183,14 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
                   msg.text.split(/(!\[.*?\]\(.*?\))/g).map((part, idx) => {
                     const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
                     if (imgMatch) {
+                      const rawUrl = imgMatch[2].trim();
+                      const finalUrl = rawUrl.startsWith('http') ? rawUrl : `${API_BASE_URL}${rawUrl.startsWith('/') ? rawUrl : '/' + rawUrl}`;
                       return (
                         <img
                           key={idx}
-                          src={imgMatch[2]}
+                          src={finalUrl}
                           alt={imgMatch[1]}
-                          className="w-full max-w-[250px] rounded-lg my-2 border border-slate-200 shadow-sm"
+                          className="w-full max-w-[250px] object-contain rounded-lg my-2 border border-slate-200 shadow-sm"
                         />
                       );
                     }
@@ -224,15 +226,15 @@ export default function ChatbotAI({ isDarkMode }: ChatbotAIProps) {
                       }`}>
                       {img.url ? (
                         <img
-                          src={img.url.startsWith('http') ? img.url : `${API_BASE_URL}${img.url}`}
+                          src={img.url.trim().startsWith('http') ? img.url.trim() : `${API_BASE_URL}${img.url.trim().startsWith('/') ? img.url.trim() : '/' + img.url.trim()}`}
                           alt={img.brand_name}
-                          className="w-16 h-16 object-cover rounded-lg bg-white"
+                          className="w-24 h-auto max-h-24 object-contain rounded-lg bg-white"
                         />
                       ) : (
-                        <div className={`w-16 h-16 rounded-lg flex items-center justify-center text-[10px] text-center px-1 ${isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-200 text-slate-500'
+                        <div className={`w-24 h-24 rounded-lg flex items-center justify-center text-[10px] text-center px-1 ${isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-200 text-slate-500'
                           }`}>Chưa có ảnh</div>
                       )}
-                      <span className={`text-[10px] mt-1 font-semibold max-w-[64px] truncate ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'
+                      <span className={`text-[10px] mt-1 font-semibold max-w-[96px] truncate ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'
                         }`} title={img.brand_name}>{img.brand_name}</span>
                     </div>
                   ))}

@@ -1,5 +1,4 @@
 export const getApiBaseUrl = () => {
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : self.location.hostname;
-  return 'http://' + hostname + ':8000';
+  return ''; // Dùng relative path để Vite proxy chuyển tiếp đến backend
 };
 export const API_BASE_URL = getApiBaseUrl();

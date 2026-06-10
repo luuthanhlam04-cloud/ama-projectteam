@@ -11,10 +11,13 @@ router = APIRouter()
 
 @router.post("/")
 async def scan_medicine(file: UploadFile = File(...)):
+    import uuid
     upload_dir = "static/user_uploads"
     os.makedirs(upload_dir, exist_ok=True)
-        
-    temp_path = os.path.join(upload_dir, file.filename)
+    
+    unique_id = str(uuid.uuid4())[:8]
+    safe_filename = f"{unique_id}_{file.filename}"
+    temp_path = os.path.join(upload_dir, safe_filename)
     processed_path = None
     
     try:

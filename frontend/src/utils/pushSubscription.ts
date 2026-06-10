@@ -20,7 +20,12 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export async function subscribeUserToPush() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+  if (!('serviceWorker' in navigator)) {
+    console.log('Service Worker is not supported');
+    return;
+  }
+  if (!('PushManager' in window) || !('Notification' in window)) {
+    alert('Trình duyệt của bạn không hỗ trợ thông báo đẩy. Đối với iPhone (iOS), bạn BẮT BUỘC phải thêm ứng dụng vào Màn hình chính (Add to Home Screen) trước tiên!');
     console.log('Push messaging is not supported');
     return;
   }

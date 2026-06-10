@@ -34,6 +34,14 @@ def encode_image(image_path):
 async def call_openrouter_vision(image_path: str):
     base64_image = encode_image(image_path)
     
+    # Phát hiện loại file từ đuôi mở rộng
+    ext = image_path.split('.')[-1].lower()
+    mime_type = "image/jpeg"
+    if ext == "png":
+        mime_type = "image/png"
+    elif ext in ["webp"]:
+        mime_type = "image/webp"
+    
     # Ép buộc mô hình trả về cấu trúc JSON thuần túy
     system_prompt = """Identify the medicine from the image. Return ONLY a raw JSON object with no markdown formatting. The JSON must contain the exact following keys:
 "brand_name" (string), "generic_name" (string), "category" (string), "dosage_form" (string), "strength" (string), "indications" (string), "contraindications" (string), "side_effects" (string), "usage_instruction" (string), "storage" (string), "search_keywords" (array of strings), "qty" (integer), "unit" (string).
@@ -63,7 +71,7 @@ IMPORTANT LANGUAGE INSTRUCTIONS:
                             "role": "user",
                             "content": [
                                 {"type": "text", "text": system_prompt},
-                                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                                {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{base64_image}"}}
                             ]
                         }
                     ]

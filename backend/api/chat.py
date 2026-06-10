@@ -61,16 +61,36 @@ async def chat_endpoint(
         # 2. Lấy lịch sử hội thoại từ Redis (Fallback tự động nếu Redis offline)
         history = await redis_service.get_history(session_uuid)
 
-        # Biến để lưu trữ ảnh nếu RAG được gọi qua tool
+        # Biến để lưu trữ ảnh
         retrieved_images_list = []
         
+        # Tự động lấy danh sách tủ thuốc
+        cabinet_text = ""
+        with Session(engine) as session:
+            statement = select(UserInventory).where(UserInventory.user_id == user_id).order_by(UserInventory.id.desc())
+            results = session.exec(statement).all()
+            if results:
+                cabinet_text = "Danh sách thuốc trong tủ cá nhân hiện tại:\n"
+                for item in results:
+                    details_str = ""
+                    if isinstance(item.medicine_details, dict):
+                        details_str = item.medicine_details.get("indications", "")
+                    cabinet_text += f"- Tên: {item.name}, Phân loại: {item.type}, Chỉ định: {details_str}, Số lượng: {item.qty} {item.unit}, image_url: {item.image_url}\n"
+                    if item.image_url:
+                        retrieved_images_list.append({
+                            "brand_name": item.name,
+                            "url": item.image_url
+                        })
+            else:
+                cabinet_text = "Tủ thuốc cá nhân hiện đang trống."
+
         # --- ĐỊNH NGHĨA TOOLS ---
         tools = [
             {
                 "type": "function",
                 "function": {
                     "name": "search_general_medicine",
-                    "description": "Tìm kiếm thông tin thuốc từ cơ sở dữ liệu tĩnh (CHỨA 50 LOẠI THUỐC CÓ SẴN ẢNH VÀ THÔNG TIN CHI TIẾT). Đây là nguồn duy nhất bạn được phép dùng để đề xuất thuốc mua ngoài cho người dùng. Bạn không được đề xuất bất kỳ loại thuốc nào khác ngoài danh sách trả về từ hàm này.",
+                    "description": "Tìm kiếm thông tin thuốc từ cơ sở dữ liệu tĩnh. Nếu tủ thuốc không có thuốc phù hợp, BẮT BUỘC dùng tool này để tìm và đề xuất thuốc mua ngoài.",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -82,76 +102,40 @@ async def chat_endpoint(
                         "required": ["query"]
                     }
                 }
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "get_my_cabinet",
-                    "description": "Lấy danh sách thuốc trong tủ cá nhân. **QUAN TRỌNG**: Sau khi kiểm tra tủ thuốc, nếu KHÔNG CÓ thuốc phù hợp với bệnh lý/triệu chứng của người dùng, bạn BẮT BUỘC phải tự động gọi tiếp `search_general_medicine` để tìm và đề xuất thuốc mua ngoài (kể cả khi người dùng không yêu cầu).",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {},
-                        "required": []
-                    }
-                }
             }
         ]
         
         # --- HÀM XỬ LÝ (HANDLERS) ---
         async def handle_search_general(query: str):
             nonlocal retrieved_images_list
-            # Chạy vector search trên thread riêng để không block Main Event Loop
             import asyncio
             context, images = await asyncio.to_thread(rag_handler.query_vector_db, query)
             retrieved_images_list.extend(images)
             return {"medicine_data_found": context}
 
-        async def handle_get_cabinet():
-            with Session(engine) as session:
-                statement = select(UserInventory).where(UserInventory.user_id == user_id).order_by(UserInventory.id.desc())
-                results = session.exec(statement).all()
-                if not results:
-                    return {"cabinet_inventory": "Tủ thuốc cá nhân hiện đang trống. YÊU CẦU HỆ THỐNG: BẠN BẮT BUỘC PHẢI GỌI TOOL `search_general_medicine` NGAY LẬP TỨC ĐỂ TÌM THUỐC MUA NGOÀI CHO NGƯỜI DÙNG, TUYỆT ĐỐI KHÔNG ĐƯỢC TỪ CHỐI TƯ VẤN."}
-                
-                cabinet_data = []
-                for item in results:
-                    cabinet_data.append({
-                        "name": item.name,
-                        "type": item.type,
-                        "strength": f"{item.qty} {item.unit}",
-                        "status": item.status,
-                        "image_url": item.image_url,
-                        "details": item.medicine_details
-                    })
-                    if item.image_url:
-                        retrieved_images_list.append({
-                            "brand_name": item.name,
-                            "url": item.image_url
-                        })
-                return {"cabinet_inventory": cabinet_data}
-
         tool_handlers = {
-            "search_general_medicine": handle_search_general,
-            "get_my_cabinet": handle_get_cabinet
+            "search_general_medicine": handle_search_general
         }
 
         # --- SYSTEM PROMPT MỚI ---
-        system_prompt = """Bạn là trợ lý y tế ảo chuyên nghiệp quản lý tủ thuốc gia đình.
-GIAO TIẾP 100% BẰNG TIẾNG VIỆT CHUẨN. Tuyệt đối không dùng các từ ngữ kỳ lạ như "Selama".
+        system_prompt = f"""Bạn là trợ lý y tế ảo chuyên nghiệp quản lý tủ thuốc gia đình.
+GIAO TIẾP 100% BẰNG TIẾNG VIỆT CHUẨN.
+{cabinet_text}
 Nếu người dùng chỉ chào hỏi bình thường, hãy chào lại thân thiện và hỏi họ cần giúp gì.
 KHI NGƯỜI DÙNG HỎI VỀ THUỐC HAY BỆNH, HÃY DÙNG TOOL PHÙ HỢP ĐỂ TÌM THÔNG TIN.
 
 QUY TẮC TRẢ LỜI:
 1. **PHÁT HIỆN ĐỐI TƯỢNG NHẠY CẢM**: "mang thai", "trẻ em", "suy gan"... CẢNH BÁO AN TOÀN ĐẦU TIÊN!
-2. **LIỆT KÊ THUỐC**: Khi người dùng hỏi 'trong tủ có thuốc trị bệnh X không?', KHÔNG ĐƯỢC liệt kê các loại thuốc trị bệnh khác đang có trong tủ (việc này sẽ làm sai lệch hình ảnh hiển thị). Chỉ trả lời Có/Không và chỉ liệt kê đúng thuốc chữa bệnh X (nếu có).
-3. **TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc (từ tủ thuốc hoặc đề xuất mua ngoài), NẾU thuốc đó có `image_url`, bạn PHẢI TỰ ĐỘNG đính kèm ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown: `![Tên thuốc](image_url)`. Tuyệt đối không tự chế ảnh nếu `image_url` không tồn tại.
+2. **CÁCH TRẢ LỜI VÀ LỰA CHỌN THUỐC**: 
+   - CHỈ đề xuất đúng loại thuốc có công dụng chữa trị trực tiếp triệu chứng/bệnh lý của người dùng. 
+   - TUYỆT ĐỐI KHÔNG liệt kê tất cả các loại thuốc đang có trong tủ thuốc (việc này sẽ làm sai lệch hình ảnh và làm người dùng rối). Kể cả khi bạn đọc được danh sách 10 loại thuốc trong tủ, bạn chỉ được nhắc tên 1 hoặc 2 loại thuốc đúng bệnh. Các thuốc không liên quan thì tuyệt đối không được nhắc tới chữ nào.
+3. **BẮT BUỘC TỰ ĐỘNG HIỂN THỊ ẢNH**: Bất cứ khi nào bạn liệt kê hoặc khuyên dùng một loại thuốc (từ tủ thuốc hoặc đề xuất mua ngoài), NẾU thuốc đó có `image_url`, bạn **BẮT BUỘC PHẢI** in ra đường dẫn ảnh của nó ở ngay dưới tên thuốc bằng cú pháp Markdown chính xác: `![Tên thuốc](chèn_nguyên_văn_đường_dẫn_image_url_vào_đây)`. Tuyệt đối không được quên thẻ ảnh này.
 4. **CẢNH BÁO LUÔN CÓ**: "Ứng dụng chỉ mang tính tham khảo, không thay thế lời khuyên bác sĩ..."
-5. **KHÔNG CÓ THUỐC TRONG TỦ**: Nếu tủ thuốc cá nhân không có thuốc phù hợp với bệnh lý của họ HOẶC trả về rỗng:
-   - Kể cả khi người dùng không yêu cầu đề xuất, BẠN BẮT BUỘC PHẢI TỰ ĐỘNG GỌI TOOL `search_general_medicine` để tìm thông tin về bệnh lý và đề xuất thuốc từ cơ sở dữ liệu y tế.
-   - Tuyệt đối không được phép trả lời là "tủ thuốc không có" rồi dừng lại mà không gọi tool `search_general_medicine`.
-   - TUYỆT ĐỐI CHỈ đề xuất các loại thuốc nằm trong danh sách kết quả được trả về trực tiếp bởi tool `search_general_medicine` (ví dụ: nếu tool trả về 'Gaviscon Dual Action', chỉ đề xuất đúng loại đó).
-   - NGHIÊM CẤM TỰ Ý ĐỀ XUẤT các thuốc từ kiến thức chung của bạn nếu chúng không có trong kết quả trả về của tool `search_general_medicine` (ví dụ: TUYỆT ĐỐI không đề xuất 'Ranitidine', 'Omeprazole', 'Gaviscon' thường nếu tool chỉ trả về 'Gaviscon Dual Action').
-   - Với mỗi thuốc đề xuất, trình bày rõ các thông tin dựa trên kết quả trả về của tool: **Tên thuốc** (phải viết chính xác tên/thương hiệu thuốc từ tool), **Công dụng**, **Thành phần chính**, và **Lý do đề xuất** phù hợp với triệu chứng của người dùng.
+5. **KHÔNG CÓ THUỐC TRONG TỦ / TÌM THUỐC NGOÀI**: Nếu tủ thuốc cá nhân không có thuốc phù hợp với bệnh lý của họ, HOẶC người dùng yêu cầu tư vấn thuốc bên ngoài:
+   - BẠN BẮT BUỘC PHẢI TỰ ĐỘNG GỌI TOOL `search_general_medicine` để tìm thông tin về bệnh lý và đề xuất thuốc từ cơ sở dữ liệu y tế (kể cả khi người dùng không yêu cầu thẳng là "hãy tìm trong qdrant/database").
+   - Tuyệt đối không được phép từ chối tư vấn bằng câu "Tôi chỉ có thể tư vấn thuốc trong tủ". Bạn CÓ QUYỀN VÀ NGHĨA VỤ phải gọi tool `search_general_medicine`.
+   - TUYỆT ĐỐI CHỈ đề xuất các loại thuốc nằm trong danh sách kết quả được trả về trực tiếp bởi tool `search_general_medicine`.
+   - NGHIÊM CẤM TỰ Ý ĐỀ XUẤT các thuốc từ kiến thức chung của bạn nếu chúng không có trong kết quả trả về của tool.
 """
         
         # 3. Gửi sang Gemini kèm theo history từ Redis và Tools
@@ -181,23 +165,23 @@ QUY TẮC TRẢ LỜI:
             brand_name = img["brand_name"]
             brand_lower = brand_name.lower()
             
-            # Kiểm tra xem tên thuốc hoặc từ khóa chính của thuốc có trong phản hồi không
             brand_pos = bot_reply_lower.find(brand_lower)
             if brand_pos == -1:
                 first_word = brand_lower.split()[0]
                 if len(first_word) > 3:
                     brand_pos = bot_reply_lower.find(first_word)
             
+            # Khôi phục lại: Nếu bot KHÔNG nhắc tới thuốc này trong câu trả lời, KHÔNG HIỆN!
             if brand_pos == -1:
                 continue
-            
-            # Lấy cửa sổ ngữ cảnh xung quanh vị trí xuất hiện của tên thuốc
+                
+            is_negative = False
             window_start = max(0, brand_pos - 150)
             window_end = min(len(bot_reply_lower), brand_pos + 500)
             context_window = bot_reply_lower[window_start:window_end]
-            
             is_negative = any(phrase in context_window for phrase in negative_phrases)
             
+            # Cho phép hiện ảnh miễn là không bị dính cảnh báo cấm dùng
             if not is_negative:
                 if brand_name not in [i["brand_name"] for i in final_images]:
                     final_images.append(img)

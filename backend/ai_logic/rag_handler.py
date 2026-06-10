@@ -114,11 +114,11 @@ class RAGHandler:
             if match:
                 info = (
                     f"- Thuốc: {item.get('brand_name')} ({item.get('generic_name')})\n"
+                    f"  Markdown Ảnh (BẮT BUỘC COPY Y HỆT DÒNG NÀY VÀO CÂU TRẢ LỜI): ![{item.get('brand_name')}]({item.get('image_url', '')})\n"
                     f"  Phân loại: {item.get('category')}\n"
                     f"  Chỉ định: {item.get('indications')}\n"
                     f"  Cách dùng: {item.get('usage_instruction')}\n"
-                    f"  Chống chỉ định: {item.get('contraindications')}\n"
-                    f"  image_url: {item.get('image_url', '')}"
+                    f"  Chống chỉ định: {item.get('contraindications')}"
                 )
                 if info not in context_chunks:
                     context_chunks.append(info)
@@ -135,11 +135,11 @@ class RAGHandler:
                     if not any(brand in chunk for chunk in context_chunks):
                         info = (
                             f"- Thuốc: {brand} ({meta.get('generic_name', '')})\n"
+                            f"  Markdown Ảnh (BẮT BUỘC COPY Y HỆT DÒNG NÀY VÀO CÂU TRẢ LỜI): ![{brand}]({meta.get('image_url', '')})\n"
                             f"  Phân loại: {meta.get('category', '')}\n"
                             f"  Chỉ định: {meta.get('indications', '')}\n"
                             f"  Cách dùng: {meta.get('usage_instruction', '')}\n"
-                            f"  Chống chỉ định: {meta.get('contraindications', '')}\n"
-                            f"  image_url: {meta.get('image_url', '')}"
+                            f"  Chống chỉ định: {meta.get('contraindications', '')}"
                         )
                         context_chunks.append(info)
                         add_image(meta)
